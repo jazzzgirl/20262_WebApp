@@ -12,7 +12,7 @@
 :root{
   --bg:#EDF0F3; --surface:#FFFFFF; --ink:#18232E; --muted:#5B6773; --line:#CBD3DB;
   --civic:#0D6B6B; --civic-deep:#08504F; --civic-weak:#DCEDEC;
-  --signal:#F2B705; --signal-weak:#FDF3D0; --danger:#B3261E; --danger-weak:#F7E1DF;
+  --peer:#7CC4BE; --signal:#F2B705; --signal-weak:#FDF3D0; --danger:#B3261E; --danger-weak:#F7E1DF;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -46,9 +46,9 @@ h1,h2,h3{line-height:1.3;margin:0}
 
 /* 홈 */
 .hero{padding:56px 0 36px}
-.hero h1{font-size:clamp(1.75rem,4.5vw,2.75rem);font-weight:700;letter-spacing:-.02em;max-width:18em}
-.hero p{margin:14px 0 0;color:var(--muted);max-width:36em}
-.weights{display:flex;height:14px;margin-top:28px;max-width:520px;border-radius:3px;overflow:hidden}
+.hero h1{font-size:clamp(1.75rem,4.5vw,2.75rem);font-weight:700;letter-spacing:-.02em}
+.hero p{margin:14px 0 0;color:var(--muted);max-width:none}
+.weights{display:flex;gap:3px;height:14px;margin-top:28px;max-width:520px;border-radius:3px;overflow:hidden}
 .weights span{display:block}
 .legend{display:flex;gap:20px;margin-top:10px;font-size:.875rem;color:var(--muted);flex-wrap:wrap}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:0}
@@ -322,8 +322,8 @@ function renderHome() {
     <section class="hero">
       <h1>공공데이터로 만든 앱, 실제로 쓸 만한가요?</h1>
       <p>평가할 프로젝트를 고르세요. 동료의 앱을 실사용자 입장에서 평가하고, 내 앱을 스스로 점검합니다.</p>
-      <div class="weights" aria-hidden="true"><span style="flex:70;background:var(--civic-deep)"></span><span style="flex:20;background:var(--civic)"></span><span style="flex:10;background:var(--signal)"></span></div>
-      <div class="legend"><span><i style="background:var(--civic-deep)"></i>교수평가 70</span><span><i style="background:var(--civic)"></i>상호평가 20</span><span><i style="background:var(--signal)"></i>자체평가 10</span></div>
+      <div class="weights" aria-hidden="true"><span style="flex:70;background:var(--civic-deep)"></span><span style="flex:20;background:var(--peer)"></span><span style="flex:10;background:var(--signal)"></span></div>
+      <div class="legend"><span><i style="background:var(--civic-deep)"></i>교수평가 70</span><span><i style="background:var(--peer)"></i>상호평가 20</span><span><i style="background:var(--signal)"></i>자체평가 10</span></div>
     </section>
     <ol class="catalog">
       ${PROJECTS.map(p => `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
