@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로젝트 평가 | AI와 공공데이터를 활용한 웹 앱 개발</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --ink:#18232E; --muted:#5B6773; --line:#CBD3DB;
+  --civic:#0D6B6B; --civic-deep:#08504F; --civic-weak:#DCEDEC;
+  --signal:#F2B705; --signal-weak:#FDF3D0; --danger:#B3261E; --danger-weak:#F7E1DF;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+button,input,textarea{font:inherit;color:inherit}
+a{color:var(--civic)}
+:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:28px 20px 96px}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+h1,h2,h3{line-height:1.3;margin:0}
+
+/* 상단 띠 */
+.band{background:var(--civic-deep);color:#fff}
+.band .wrap{padding-top:22px;padding-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.band .course{font-size:.875rem;opacity:.8}
+.band .title{font-size:1.125rem;font-weight:700}
+.band .who{display:flex;align-items:center;gap:10px;font-size:.9375rem}
+
+/* 버튼 */
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:10px 18px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--civic)}
+.btn.primary{background:var(--civic);border-color:var(--civic);color:#fff}
+.btn.primary:hover{background:var(--civic-deep)}
+.btn.ghost{background:transparent}
+.btn.on-dark{background:transparent;border-color:rgba(255,255,255,.4);color:#fff;padding:6px 12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.link{background:none;border:0;padding:0;color:var(--civic);cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+
+/* 홈 */
+.hero{padding:56px 0 36px}
+.hero h1{font-size:clamp(1.75rem,4.5vw,2.75rem);font-weight:700;letter-spacing:-.02em;max-width:18em}
+.hero p{margin:14px 0 0;color:var(--muted);max-width:36em}
+.weights{display:flex;height:14px;margin-top:28px;max-width:520px;border-radius:3px;overflow:hidden}
+.weights span{display:block}
+.legend{display:flex;gap:20px;margin-top:10px;font-size:.875rem;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:0}
+.catalog{list-style:none;margin:8px 0 0;padding:0;border-top:2px solid var(--ink)}
+.catalog li{border-bottom:1px solid var(--line)}
+.proj{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:16px;width:100%;padding:20px 8px;background:none;border:0;text-align:left;cursor:pointer}
+.proj .no{font-size:1.75rem;font-weight:700;color:var(--civic);font-variant-numeric:tabular-nums}
+.proj strong{display:block;font-size:1.125rem}
+.proj .state{font-size:.875rem;font-weight:500;padding:4px 12px;border-radius:999px;background:var(--civic);color:#fff}
+.proj:hover:not(:disabled){background:var(--civic-weak)}
+.proj:disabled{cursor:default}
+.proj:disabled .no{color:var(--line)}
+.proj:disabled strong{color:var(--muted)}
+.proj:disabled .state{background:transparent;color:var(--muted);border:1px solid var(--line)}
+
+/* 섹션 헤더 */
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:32px 0 18px;flex-wrap:wrap}
+.head h2{font-size:1.5rem}
+.back{margin-top:24px}
+
+/* 이름 그리드 */
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.name-btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 14px;font-weight:500;text-align:left;cursor:pointer;min-height:58px}
+.name-btn:hover{border-color:var(--civic);background:var(--civic-weak)}
+
+/* 탭 */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-top:28px;overflow-x:auto}
+.tab{background:none;border:0;padding:12px 18px;font-weight:500;color:var(--muted);cursor:pointer;border-radius:6px 6px 0 0;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+.tab .cnt{font-size:.8125rem;margin-left:6px;opacity:.85;font-variant-numeric:tabular-nums}
+
+/* 진행 막대 */
+.progress{display:flex;align-items:center;gap:14px;margin:22px 0 14px}
+.progress .track{flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.progress .fill{height:100%;background:var(--civic)}
+.progress b{font-variant-numeric:tabular-nums}
+
+/* 평가 대상 목록 */
+.targets{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.target{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:6px;text-align:left;cursor:pointer}
+.target:hover:not(:disabled){border-color:var(--civic)}
+.target:disabled{background:transparent;border-style:dashed;cursor:not-allowed}
+.target .nm{font-weight:700}
+.target .sub{display:block;font-size:.8125rem;color:var(--muted);margin-top:2px}
+.pill{font-size:.8125rem;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pill.done{background:var(--civic-weak);color:var(--civic-deep)}
+.pill.todo{background:var(--signal-weak);color:#7A5B00}
+.pill.off{background:var(--danger-weak);color:var(--danger)}
+
+/* 평가 양식 */
+.form{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:28px;margin-top:16px}
+.form-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.form-top h2{font-size:1.5rem}
+.item{border:0;margin:0;padding:22px 0;border-bottom:1px solid var(--line)}
+.item legend{padding:0;display:flex;justify-content:space-between;gap:12px;width:100%;font-weight:700;font-size:1.0625rem}
+.item legend .mx{font-weight:500;color:var(--muted);font-size:.9375rem;white-space:nowrap}
+.item .desc{margin:4px 0 14px;color:var(--muted);font-size:.9375rem}
+
+/* 점수 막대 (선택형) */
+.bar{display:flex;gap:4px;max-width:560px}
+.seg{flex:1;min-width:0;height:44px;border:1px solid var(--line);background:var(--bg);border-radius:4px;cursor:pointer;font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted);transition:background .12s,color .12s}
+.seg.zero{flex:0 0 44px}
+.seg:hover{border-color:var(--civic)}
+.seg.on{background:var(--civic);border-color:var(--civic);color:#fff}
+.seg.cur{background:var(--signal);border-color:#C99500;color:var(--ink);font-weight:700}
+.seg.zero.cur{background:var(--ink);border-color:var(--ink);color:#fff}
+
+textarea{width:100%;min-height:120px;resize:vertical;border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:var(--surface);line-height:1.6}
+textarea:focus{border-color:var(--civic);outline:none;box-shadow:0 0 0 3px var(--civic-weak)}
+.field{margin-top:16px}
+.field label{display:block;font-weight:500;margin-bottom:6px}
+.field .count{text-align:right;font-size:.8125rem;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.field .count.short{color:var(--danger)}
+.req{color:var(--danger);margin-left:4px}
+
+.submit-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:24px;flex-wrap:wrap}
+.total{font-size:1.125rem}
+.total b{font-size:1.75rem;font-variant-numeric:tabular-nums;color:var(--civic-deep)}
+.err{color:var(--danger);font-size:.9375rem;margin:10px 0 0;white-space:pre-line}
+.note{background:var(--signal-weak);border-left:4px solid var(--signal);padding:12px 16px;border-radius:0 6px 6px 0;margin-top:16px;font-size:.9375rem}
+
+/* 교수자 */
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.9375rem}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{background:var(--civic-weak);font-weight:700;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.excl td{background:#F8F9FA;color:var(--muted)}
+input[type=url],input[type=text],input[type=password]{width:100%;border:1px solid var(--line);border-radius:6px;padding:9px 12px;background:var(--surface)}
+input[type=url]:focus,input[type=text]:focus,input[type=password]:focus{border-color:var(--civic);outline:none;box-shadow:0 0 0 3px var(--civic-weak)}
+.chk{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;cursor:pointer}
+.chk input{width:18px;height:18px;accent-color:var(--danger)}
+.sticky-save{position:sticky;bottom:0;background:var(--bg);padding:14px 0;display:flex;justify-content:flex-end;gap:12px;align-items:center}
+
+.split{display:grid;grid-template-columns:240px 1fr;gap:20px;margin-top:20px;align-items:start}
+.plist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;max-height:70vh;overflow:auto}
+.plist button{width:100%;display:flex;justify-content:space-between;gap:8px;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer}
+.plist button:hover{background:var(--civic-weak)}
+.plist button[aria-current="true"]{background:var(--ink);color:#fff}
+.plist .sc{font-variant-numeric:tabular-nums;font-size:.875rem}
+
+.slider-row{display:grid;grid-template-columns:36px 1fr 36px 64px;gap:10px;align-items:center;margin-top:6px}
+.slider-row .step{height:36px;border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer;font-weight:700}
+.slider-row output{font-size:1.25rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.slider-row output small{font-size:.8125rem;color:var(--muted);font-weight:400}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,var(--civic) var(--pct,0%),var(--line) var(--pct,0%));cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--surface);border:3px solid var(--civic)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--surface);border:3px solid var(--civic)}
+.ticks{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin:2px 46px 0;font-variant-numeric:tabular-nums}
+
+.meter{display:flex;gap:3px;height:16px;margin:10px 0 4px}
+.meter span{display:block;background:var(--line);border-radius:2px;overflow:hidden}
+.meter span i{display:block;height:100%;background:var(--civic)}
+
+.ref{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.ref div{background:var(--bg);border-radius:6px;padding:10px 12px;font-size:.875rem;color:var(--muted)}
+.ref b{display:block;font-size:1.125rem;color:var(--ink);font-variant-numeric:tabular-nums}
+
+details{margin-top:14px}
+summary{cursor:pointer;font-weight:500;color:var(--civic)}
+.fb{list-style:none;margin:10px 0 0;padding:0}
+.fb li{padding:10px 0;border-bottom:1px dashed var(--line);font-size:.9375rem}
+.fb .who{font-size:.8125rem;color:var(--muted)}
+
+.detail-row td{background:#FAFBFC}
+.detail-row h4{margin:6px 0;font-size:.9375rem}
+.row-btn{background:none;border:0;padding:0;cursor:pointer;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+
+.pw-box{max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px;margin-top:20px}
+.pw-box .cur{font-size:1.25rem;font-weight:700;margin:4px 0 18px;font-variant-numeric:tabular-nums}
+
+/* 모달 */
+#modal{position:fixed;inset:0;background:rgba(24,35,46,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+#modal[hidden]{display:none}
+.sheet{background:var(--surface);border-radius:10px;padding:28px;width:100%;max-width:400px}
+.sheet h2{font-size:1.25rem}
+.sheet p{margin:6px 0 16px}
+.row-end{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+
+#loading{position:fixed;inset:0;background:rgba(237,240,243,.7);display:flex;align-items:center;justify-content:center;z-index:60;font-weight:500}
+#loading[hidden]{display:none}
+.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--civic);border-radius:50%;animation:sp 0.8s linear infinite;margin-right:12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:6px;z-index:70;font-weight:500;max-width:90vw}
+#toast[hidden]{display:none}
+
+@media (max-width:720px){
+  .wrap{padding:20px 16px 80px}
+  .hero{padding:36px 0 24px}
+  .form{padding:20px 16px}
+  .split{grid-template-columns:1fr}
+  .plist{max-height:none;display:flex;overflow-x:auto;border-radius:6px}
+  .plist li{flex:0 0 auto}
+  .plist button{border-bottom:0;border-right:1px solid var(--line);white-space:nowrap}
+  .ref{grid-template-columns:1fr 1fr 1fr}
+  .seg{height:40px}
+  .seg.zero{flex-basis:36px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal" hidden></div>
+<div id="loading" hidden><div class="spin"></div>처리 중입니다</div>
+<div id="toast" hidden role="status"></div>
+
+<script>
+/* ===== Apps Script 웹 앱 주소를 여기에 붙여넣으세요 ===== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbzNpdQVad6yPHc2tYF_9j6kFy6tZSGqPk4FqfWaEx_Lln1kvpaDMZ-ay3Lc4dko1E5A/exec';
+
+const COURSE = '2026학년도 2학기 메타버스 콘텐츠 프로젝트';
+const TITLE = 'AI와 공공데이터를 활용한 웹 앱 개발';
+const PROJECTS = [
+  { id:'p1', no:'I',   name:'프로젝트 I',   open:true },
+  { id:'p2', no:'II',  name:'프로젝트 II',  open:false },
+  { id:'p3', no:'III', name:'프로젝트 III', open:false },
+  { id:'p4', no:'IV',  name:'프로젝트 IV',  open:false }
+];
+const PEER_ITEMS = [
+  { label:'"나라면 실제로 써볼 것 같다"', max:8, desc:'실사용자 입장에서 이 앱을 실제로 써볼 의향이 얼마나 되나요?' },
+  { label:'문제 해결의 참신성·유용성', max:4, desc:'아이디어가 실제로 유용하고 참신한가요?' },
+  { label:'데이터 활용의 적절성', max:4, desc:'공공데이터를 의미 있게 활용했나요?' },
+  { label:'발표 전달력', max:4, desc:'내용이 이해하기 쉽고 시연이 명확했나요?' }
+];
+const SELF_ITEMS = [
+  { label:'실사용자 관점 자체 점검', max:5, desc:'목표한 사용자가 실제로 이 앱을 쓸 이유가 있는지 스스로 점검해 보세요.',
+    texts:[{ label:'목표 사용자는 누구이고, 왜 이 앱을 쓰게 될까요?', ph:'예) 버스로 통학하는 학생이 ○○ 정보를 매일 확인해야 해서…' }] },
+  { label:'목표 대비 달성도', max:3, desc:'기획 단계에서 계획한 핵심 기능을 실제로 얼마나 구현했나요?',
+    texts:[{ label:'계획한 핵심 기능 중 구현한 것과 구현하지 못한 것', ph:'구현한 기능 / 구현하지 못한 기능과 그 이유' }] },
+  { label:'과정 성찰', max:2, desc:'어려웠던 점, 배운 점, 다음 프로젝트에 적용할 점을 돌아보세요.',
+    texts:[{ label:'어려웠던 점', ph:'' }, { label:'배운 점', ph:'' }, { label:'다음 프로젝트에 적용할 점', ph:'' }] }
+];
+const PROF_ITEMS = [
+  { label:'실제 활용도 및 사용자 가치', max:20, desc:'실사용자가 의미 있게, 반복적으로 사용할 만한가 / 실생활에 실질적 도움이 되는가' },
+  { label:'공공 API·오픈데이터 연동 완성도', max:10, desc:'데이터가 정상 호출·반영되는지, 데이터 선정의 적절성' },
+  { label:'핵심 기능 구현 정도', max:10, desc:'기획한 핵심 기능이 실제로 정상 작동하는지' },
+  { label:'생성형 AI 활용의 적절성·완성도', max:10, desc:'AI가 사용자 활용도를 높이는 지점에 설계되었는지, 입력/출력 설계의 타당성' },
+  { label:'사용성(UI/UX)', max:10, desc:'실사용자가 불편 없이 이용할 수 있는 화면 구성인지' },
+  { label:'배포 완료 및 정상 작동', max:5, desc:'배포 URL 접속 가능 여부, 라이브 데모 성공 여부' },
+  { label:'발표 논리성 및 전달력', max:5, desc:'문제 정의~구현까지 논리적 흐름, 질의응답 대응' }
+];
+const MIN_TEXT = 10;
+
+const S = { p:'p1', gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null, profSel:null, openRow:null };
+let FORM = null;
+const store = (() => { try { const t = window.sessionStorage; t.setItem('_t','1'); t.removeItem('_t'); return t; } catch (e) { const m = {}; return { getItem:k => k in m ? m[k] : null, setItem:(k,v) => { m[k] = String(v); }, removeItem:k => { delete m[k]; }, clear:() => { for (const k in m) delete m[k]; } }; } })();
+
+/* ===== 공통 ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sum = a => a.reduce((s,v) => s + (Number(v)||0), 0);
+const fmt = (v, d=1) => v === null || v === undefined ? '—' : (Math.round(v * 10**d) / 10**d).toString();
+const app = html => { $('#app').innerHTML = html; window.scrollTo(0,0); };
+
+async function api(action, payload = {}) {
+  if (!API_URL || API_URL.indexOf('http') !== 0) throw new Error('index.html 의 API_URL 에 Apps Script 웹 앱 주소를 입력해야 합니다.');
+  $('#loading').hidden = false;
+  try {
+    const r = await fetch(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...payload }) });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.msg || '요청을 처리하지 못했습니다.');
+    return j;
+  } catch (e) {
+    if (e instanceof TypeError) throw new Error('서버에 연결하지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.');
+    throw e;
+  } finally { $('#loading').hidden = true; }
+}
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2600);
+}
+
+function openModal({ title, desc, type = 'password', inputmode = 'text', placeholder = '', submit = '확인', onSubmit }) {
+  const m = $('#modal');
+  m.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <h2 id="mt">${esc(title)}</h2><p class="muted">${esc(desc)}</p>
+    <form id="mform"><input id="minput" type="${type}" inputmode="${inputmode}" placeholder="${esc(placeholder)}" autocomplete="off" aria-label="${esc(title)}">
+    <p id="merr" class="err" role="alert"></p>
+    <div class="row-end"><button type="button" class="btn ghost" id="mcancel">취소</button><button class="btn primary">${esc(submit)}</button></div></form></div>`;
+  m.hidden = false;
+  $('#minput').focus();
+  $('#mcancel').onclick = closeModal;
+  m.onclick = e => { if (e.target === m) closeModal(); };
+  $('#mform').onsubmit = async e => {
+    e.preventDefault();
+    const v = $('#minput').value.trim();
+    if (!v) { $('#merr').textContent = '값을 입력해 주세요.'; return; }
+    try { await onSubmit(v); closeModal(); }
+    catch (err) { $('#merr').textContent = err.message; $('#minput').select(); }
+  };
+}
+function closeModal() { $('#modal').hidden = true; $('#modal').innerHTML = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
+
+function band(right = '') {
+  return `<header class="band"><div class="wrap"><div><div class="course">${esc(COURSE)}</div><div class="title">${esc(TITLE)}</div></div><div class="who">${right}</div></div></header>`;
+}
+
+/* ===== 홈 ===== */
+function renderHome() {
+  app(`${band('<button class="btn on-dark" id="adminBtn">교수자 메뉴</button>')}
+  <main class="wrap">
+    <section class="hero">
+      <h1>공공데이터로 만든 앱, 실제로 쓸 만한가요?</h1>
+      <p>평가할 프로젝트를 고르세요. 동료의 앱을 실사용자 입장에서 평가하고, 내 앱을 스스로 점검합니다.</p>
+      <div class="weights" aria-hidden="true"><span style="flex:70;background:var(--civic-deep)"></span><span style="flex:20;background:var(--civic)"></span><span style="flex:10;background:var(--signal)"></span></div>
+      <div class="legend"><span><i style="background:var(--civic-deep)"></i>교수평가 70</span><span><i style="background:var(--civic)"></i>상호평가 20</span><span><i style="background:var(--signal)"></i>자체평가 10</span></div>
+    </section>
+    <ol class="catalog">
+      ${PROJECTS.map(p => `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
+        <span class="no">${p.no}</span>
+        <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가 진행 중' : '다음 프로젝트에서 열립니다'}</span></span>
+        <span class="state">${p.open ? '입장하기' : '준비 중'}</span></button></li>`).join('')}
+    </ol>
+  </main>`);
+  document.querySelectorAll('[data-proj]').forEach(b => b.onclick = () => openGate(b.dataset.proj));
+  $('#adminBtn').onclick = openAdminLogin;
+}
+
+function openGate(p) {
+  if (S.gatePw && S.students.length) return renderNames();
+  openModal({
+    title: '프로젝트 I 입장', desc: '수업 시간에 안내한 비밀번호를 입력하세요.', submit: '입장',
+    onSubmit: async pw => {
+      const r = await api('gate', { p, pw });
+      S.gatePw = pw; S.students = r.students; store.setItem('gatePw', pw);
+      setTimeout(renderNames);
+    }
+  });
+}
+
+/* ===== 이름 선택 ===== */
+function renderNames() {
+  app(`${band('<button class="btn on-dark" id="adminBtn">교수자 메뉴</button>')}
+  <main class="wrap">
+    <div class="head"><div><h2>본인 이름을 선택하세요</h2><p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
+    <div class="names">${S.students.map(n => `<button class="name-btn" data-n="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+    <div class="back"><button class="link" id="home">처음으로</button></div>
+  </main>`);
+  document.querySelectorAll('.name-btn').forEach(b => b.onclick = () => openStudentLogin(b.dataset.n));
+  $('#adminBtn').onclick = openAdminLogin;
+  $('#home').onclick = () => { S.gatePw = null; S.students = []; store.removeItem('gatePw'); renderHome(); };
+}
+
+function openStudentLogin(name) {
+  openModal({
+    title: `${name} 학생`, desc: '학번을 입력하세요.', inputmode: 'numeric', placeholder: '학번 9자리', submit: '들어가기',
+    onSubmit: async sid => {
+      const r = await api('studentLogin', { p:S.p, gatePw:S.gatePw, name, sid });
+      S.me = name; S.sid = sid; S.data = r.data;
+      store.setItem('me', name); store.setItem('sid', sid);
+      setTimeout(() => renderStudent('peer'));
+    }
+  });
+}
+
+function logoutStudent() {
+  S.me = S.sid = S.data = null;
+  store.removeItem('me'); store.removeItem('sid');
+  renderNames();
+}
+
+/* ===== 학생 화면 ===== */
+function renderStudent(tab) {
+  const d = S.data;
+  const active = d.targets.filter(t => !t.excluded);
+  const done = active.filter(t => d.peers[t.name]).length;
+  const tabs = `<div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="${tab==='peer'}" data-tab="peer">상호평가<span class="cnt">${done}/${active.length}</span></button>
+    <button class="tab" role="tab" aria-selected="${tab==='self'}" data-tab="self">자기평가<span class="cnt">${d.self ? '완료' : '미완료'}</span></button></div>`;
+  let body = '';
+  if (tab === 'peer') {
+    const pct = active.length ? Math.round(done / active.length * 100) : 0;
+    body = `<div class="progress"><div class="track"><div class="fill" style="width:${pct}%"></div></div><b>${done} / ${active.length}명 완료</b></div>
+      <p class="muted small" style="margin:0 0 14px">본인을 제외한 학생을 평가합니다. 제출한 평가는 다시 열어 수정할 수 있습니다.</p>
+      <ul class="targets">${d.targets.map(t => {
+        const sub = d.peers[t.name];
+        if (t.excluded) return `<li><button class="target" disabled><span><span class="nm">${esc(t.name)}</span><span class="sub">결석·미제출로 평가하지 않습니다</span></span><span class="pill off">평가 제외</span></button></li>`;
+        return `<li><button class="target" data-t="${esc(t.name)}"><span><span class="nm">${esc(t.name)}</span><span class="sub">${sub ? `내가 준 점수 ${sub.total} / 20` : (t.url ? '앱 주소 등록됨' : '앱 주소 미등록')}</span></span><span class="pill ${sub ? 'done' : 'todo'}">${sub ? '평가 완료' : '평가 전'}</span></button></li>`;
+      }).join('')}</ul>`;
+  } else {
+    body = selfFormHTML();
+  }
+  app(`${band(`<span>${esc(S.me)}</span><button class="btn on-dark" id="logout">나가기</button>`)}
+  <main class="wrap">${tabs}${body}</main>`);
+  $('#logout').onclick = logoutStudent;
+  document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => renderStudent(b.dataset.tab));
+  document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => renderPeerForm(b.dataset.t));
+  if (tab === 'self') bindSelfForm();
+}
+
+/* 점수 막대 */
+function scoreBar(idx, max, val, label) {
+  let h = `<div class="bar" role="radiogroup" aria-label="${esc(label)}" data-idx="${idx}">`;
+  for (let i = 0; i <= max; i++) {
+    const cls = ['seg', i === 0 ? 'zero' : '', (val !== null && i > 0 && i < val) ? 'on' : '', val === i ? 'cur' : ''].join(' ');
+    h += `<button type="button" class="${cls}" data-v="${i}" role="radio" aria-checked="${val === i}" aria-label="${i}점">${i}</button>`;
+  }
+  return h + '</div>';
+}
+function paintBar(bar, v) {
+  bar.querySelectorAll('.seg').forEach(s => {
+    const i = +s.dataset.v;
+    s.classList.toggle('on', i > 0 && i < v);
+    s.classList.toggle('cur', i === v);
+    s.setAttribute('aria-checked', i === v);
+  });
+}
+document.addEventListener('click', e => {
+  const s = e.target.closest('.seg'); if (!s || !FORM) return;
+  const bar = s.parentElement, v = +s.dataset.v;
+  FORM.vals[+bar.dataset.idx] = v;
+  paintBar(bar, v);
+  updateFormTotal();
+});
+function updateFormTotal() {
+  const el = $('#ftotal'); if (!el) return;
+  el.textContent = sum(FORM.vals);
+}
+function bindCounter(ta) {
+  const c = ta.parentElement.querySelector('.count');
+  const upd = () => { const n = ta.value.trim().length; c.textContent = `${n}자${n < MIN_TEXT ? ` (최소 ${MIN_TEXT}자)` : ''}`; c.classList.toggle('short', n < MIN_TEXT); };
+  ta.addEventListener('input', upd); upd();
+}
+
+/* 상호평가 양식 */
+function renderPeerForm(name) {
+  const d = S.data, t = d.targets.find(x => x.name === name), prev = d.peers[name];
+  FORM = { kind:'peer', target:name, vals: prev ? prev.scores.slice() : PEER_ITEMS.map(() => null) };
+  app(`${band(`<span>${esc(S.me)}</span><button class="btn on-dark" id="logout">나가기</button>`)}
+  <main class="wrap">
+    <div class="back" style="margin-top:8px"><button class="link" id="toList">평가 목록으로</button></div>
+    <form class="form" id="pform" novalidate>
+      <div class="form-top">
+        <div><p class="muted small" style="margin:0">상호평가 · 20점</p><h2>${esc(name)}</h2></div>
+        ${t.url ? `<a class="btn primary" href="${esc(t.url)}" target="_blank" rel="noopener">앱 열어 보기</a>` : '<span class="muted small">앱 주소가 아직 등록되지 않았습니다</span>'}
+      </div>
+      ${PEER_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
+        <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}</fieldset>`).join('')}
+      <div class="field"><label for="fb">피드백<span class="req">필수</span></label>
+        <textarea id="fb" placeholder="실사용자로서 좋았던 점과, 실제로 쓰려면 보완했으면 하는 점을 구체적으로 적어 주세요.">${esc(prev ? prev.feedback : '')}</textarea>
+        <div class="count"></div></div>
+      <p class="err" id="ferr" role="alert"></p>
+      <div class="submit-row"><div class="total">합계 <b id="ftotal">0</b> / 20점</div>
+        <button class="btn primary" type="submit">${prev ? '평가 수정하기' : '평가 제출하기'}</button></div>
+    </form>
+  </main>`);
+  $('#logout').onclick = logoutStudent;
+  $('#toList').onclick = () => { FORM = null; renderStudent('peer'); };
+  bindCounter($('#fb'));
+  updateFormTotal();
+  $('#pform').onsubmit = async e => {
+    e.preventDefault();
+    const errs = [];
+    if (FORM.vals.some(v => v === null)) errs.push('모든 항목의 점수를 선택해 주세요.');
+    const fb = $('#fb').value.trim();
+    if (fb.length < MIN_TEXT) errs.push(`피드백을 ${MIN_TEXT}자 이상 작성해 주세요.`);
+    if (errs.length) { $('#ferr').textContent = errs.join('\n'); return; }
+    try {
+      const r = await api('submitPeer', { p:S.p, gatePw:S.gatePw, name:S.me, sid:S.sid, target:name, scores:FORM.vals, feedback:fb });
+      S.data = r.data; FORM = null;
+      renderStudent('peer'); toast(`${name} 학생 평가를 저장했습니다.`);
+    } catch (err) { $('#ferr').textContent = err.message; }
+  };
+}
+
+/* 자기평가 양식 */
+function selfFormHTML() {
+  const prev = S.data.self;
+  FORM = { kind:'self', vals: prev ? prev.scores.slice() : SELF_ITEMS.map(() => null) };
+  let ti = 0;
+  return `<form class="form" id="sform" novalidate>
+    <div class="form-top"><div><p class="muted small" style="margin:0">자기평가 · 10점</p><h2>내 앱 점검하기</h2></div>
+      ${prev ? '<span class="pill done">제출 완료 · 수정 가능</span>' : ''}</div>
+    ${SELF_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
+      <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}
+      ${it.texts.map(tx => { const i = ti++; return `<div class="field"><label for="st${i}">${esc(tx.label)}<span class="req">필수</span></label>
+        <textarea id="st${i}" class="stext" placeholder="${esc(tx.ph)}">${esc(prev ? prev.texts[i] : '')}</textarea><div class="count"></div></div>`; }).join('')}
+      </fieldset>`).join('')}
+    <p class="err" id="ferr" role="alert"></p>
+    <div class="submit-row"><div class="total">합계 <b id="ftotal">0</b> / 10점</div>
+      <button class="btn primary" type="submit">${prev ? '자기평가 수정하기' : '자기평가 제출하기'}</button></div>
+  </form>`;
+}
+function bindSelfForm() {
+  document.querySelectorAll('.stext').forEach(bindCounter);
+  updateFormTotal();
+  $('#sform').onsubmit = async e => {
+    e.preventDefault();
+    const texts = [...document.querySelectorAll('.stext')].map(t => t.value.trim());
+    const errs = [];
+    if (FORM.vals.some(v => v === null)) errs.push('모든 항목의 점수를 선택해 주세요.');
+    if (texts.some(t => t.length < MIN_TEXT)) errs.push(`서술 항목을 모두 ${MIN_TEXT}자 이상 작성해 주세요.`);
+    if (errs.length) { $('#ferr').textContent = errs.join('\n'); return; }
+    try {
+      const r = await api('submitSelf', { p:S.p, gatePw:S.gatePw, name:S.me, sid:S.sid, scores:FORM.vals, texts });
+      S.data = r.data; renderStudent('self'); toast('자기평가를 저장했습니다.');
+    } catch (err) { $('#ferr').textContent = err.message; }
+  };
+}
+
+/* ===== 교수자 ===== */
+function openAdminLogin() {
+  openModal({
+    title: '교수자 메뉴', desc: '교수자 비밀번호를 입력하세요.', submit: '들어가기',
+    onSubmit: async pw => {
+      const r = await api('adminLogin', { p:S.p, adminPw:pw });
+      S.adminPw = pw; S.admin = r.data; store.setItem('adminPw', pw);
+      setTimeout(() => renderAdmin('students'));
+    }
+  });
+}
+function logoutAdmin() {
+  S.adminPw = S.admin = null; S.profSel = null; FORM = null;
+  store.removeItem('adminPw'); renderHome();
+}
+
+function results() {
+  const A = S.admin;
+  const ex = new Set(A.students.filter(s => s.excluded).map(s => s.name));
+  const prof = Object.fromEntries(A.profs.map(x => [x.name, x]));
+  const self = Object.fromEntries(A.selves.map(x => [x.name, x]));
+  return A.students.map(s => {
+    const recv = A.peers.filter(p => p.target === s.name);
+    const peerAvg = recv.length ? sum(recv.map(r => r.total)) / recv.length : null;
+    const given = A.peers.filter(p => p.evaluator === s.name && !ex.has(p.target)).length;
+    const need = A.students.filter(x => x.name !== s.name && !x.excluded).length;
+    const pv = prof[s.name] ? prof[s.name].total : null;
+    const sv = self[s.name] ? self[s.name].total : null;
+    return { ...s, recv, peerAvg, given, need, prof:pv, profRec:prof[s.name] || null, self:sv, selfRec:self[s.name] || null,
+      total: (pv || 0) + (peerAvg || 0) + (sv || 0) };
+  });
+}
+
+function renderAdmin(tab) {
+  FORM = null;
+  const tabs = [['students','학생 설정'],['prof','교수 평가'],['result','결과'],['pw','비밀번호']];
+  let body = '';
+  if (tab === 'students') body = adminStudentsHTML();
+  if (tab === 'prof') body = adminProfHTML();
+  if (tab === 'result') body = adminResultHTML();
+  if (tab === 'pw') body = adminPwHTML();
+  app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn on-dark" id="logout">나가기</button>`)}
+  <main class="wrap">
+    <div class="tabs" role="tablist">${tabs.map(([k,l]) => `<button class="tab" role="tab" aria-selected="${tab===k}" data-atab="${k}">${l}</button>`).join('')}</div>
+    ${body}
+  </main>`);
+  $('#logout').onclick = logoutAdmin;
+  document.querySelectorAll('[data-atab]').forEach(b => b.onclick = () => renderAdmin(b.dataset.atab));
+  if (tab === 'students') bindAdminStudents();
+  if (tab === 'prof') bindAdminProf();
+  if (tab === 'result') bindAdminResult();
+  if (tab === 'pw') bindAdminPw();
+}
+
+/* 학생 설정 */
+function adminStudentsHTML() {
+  return `<div class="head"><div><h2>배포 주소와 평가 제외</h2>
+    <p class="muted" style="margin:4px 0 0">평가 제외로 표시한 학생은 다른 학생들이 상호평가 점수를 입력할 수 없습니다.</p></div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>이름</th><th>학번</th><th style="min-width:280px">웹 앱 배포 주소</th><th>평가 제외</th></tr></thead><tbody>
+    ${S.admin.students.map(s => `<tr class="${s.excluded ? 'excl' : ''}"><td><b>${esc(s.name)}</b></td><td class="num">${esc(s.sid)}</td>
+      <td><input type="url" class="in-url" data-n="${esc(s.name)}" value="${esc(s.url)}" placeholder="https://"></td>
+      <td><label class="chk"><input type="checkbox" class="in-ex" data-n="${esc(s.name)}" ${s.excluded ? 'checked' : ''}>결석·미제출</label></td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="sticky-save"><span class="muted small" id="dirty"></span><button class="btn primary" id="saveStu">변경 사항 저장</button></div>`;
+}
+function bindAdminStudents() {
+  const mark = () => { $('#dirty').textContent = '저장하지 않은 변경 사항이 있습니다'; };
+  document.querySelectorAll('.in-url').forEach(i => i.addEventListener('input', mark));
+  document.querySelectorAll('.in-ex').forEach(i => i.addEventListener('change', () => { i.closest('tr').classList.toggle('excl', i.checked); mark(); }));
+  $('#saveStu').onclick = async () => {
+    const list = S.admin.students.map(s => ({
+      name: s.name,
+      url: document.querySelector(`.in-url[data-n="${CSS.escape(s.name)}"]`).value.trim(),
+      excluded: document.querySelector(`.in-ex[data-n="${CSS.escape(s.name)}"]`).checked
+    }));
+    const bad = list.filter(x => x.url && !/^https?:\/\//i.test(x.url));
+    if (bad.length) { toast(`주소는 http:// 또는 https:// 로 시작해야 합니다: ${bad.map(b => b.name).join(', ')}`); return; }
+    try { const r = await api('adminSaveStudents', { p:S.p, adminPw:S.adminPw, list }); S.admin = r.data; renderAdmin('students'); toast('학생 설정을 저장했습니다.'); }
+    catch (err) { toast(err.message); }
+  };
+}
+
+/* 교수 평가 */
+function adminProfHTML() {
+  const R = results();
+  if (!S.profSel) S.profSel = R[0].name;
+  const s = R.find(x => x.name === S.profSel);
+  const vals = s.profRec ? s.profRec.scores.slice() : PROF_ITEMS.map(() => 0);
+  FORM = { kind:'prof', target:s.name, vals };
+  return `<div class="split">
+    <ul class="plist" aria-label="학생 목록">${R.map(x => `<li><button data-ps="${esc(x.name)}" aria-current="${x.name === S.profSel}">
+      <span>${esc(x.name)}${x.excluded ? ' · 제외' : ''}</span><span class="sc">${x.prof === null ? '미입력' : x.prof + '점'}</span></button></li>`).join('')}</ul>
+    <form class="form" id="profForm" style="margin-top:0" novalidate>
+      <div class="form-top"><div><p class="muted small" style="margin:0">교수평가 · 70점</p><h2>${esc(s.name)}</h2></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${s.excluded ? '<span class="pill off">평가 제외(상호평가)</span>' : ''}
+        ${s.prof === null ? '<span class="pill todo">미저장</span>' : '<span class="pill done">저장됨</span>'}
+        ${s.url ? `<a class="btn" href="${esc(s.url)}" target="_blank" rel="noopener">앱 열기</a>` : ''}</div></div>
+      <div class="ref"><div>상호평가 평균<b>${fmt(s.peerAvg, 2)}</b>${s.recv.length}명 평가</div><div>자기평가<b>${s.self ?? '—'}</b>/ 10</div><div>현재 교수평가<b id="ptot2">${sum(vals)}</b>/ 70</div></div>
+      <div class="meter" id="meter" aria-hidden="true">${PROF_ITEMS.map((it,k) => `<span style="flex:${it.max}"><i style="width:${vals[k]/it.max*100}%"></i></span>`).join('')}</div>
+      ${PROF_ITEMS.map((it, k) => `<div class="item"><div style="display:flex;justify-content:space-between;gap:12px;font-weight:700"><label for="rg${k}">${esc(it.label)}</label><span class="muted" style="font-weight:500">${it.max}점</span></div>
+        <p class="desc">${esc(it.desc)}</p>
+        <div class="slider-row"><button type="button" class="step" data-k="${k}" data-d="-1" aria-label="1점 내리기">−</button>
+          <input type="range" id="rg${k}" class="rng" data-k="${k}" min="0" max="${it.max}" step="1" value="${vals[k]}" style="--pct:${vals[k]/it.max*100}%">
+          <button type="button" class="step" data-k="${k}" data-d="1" aria-label="1점 올리기">+</button>
+          <output id="ov${k}">${vals[k]}<small> / ${it.max}</small></output></div>
+        <div class="ticks"><span>0</span><span>${it.max}</span></div></div>`).join('')}
+      <div class="field"><label for="memo">메모 (선택)</label><textarea id="memo" style="min-height:80px" placeholder="채점 근거나 학생에게 줄 코멘트">${esc(s.profRec ? s.profRec.memo : '')}</textarea></div>
+      ${s.recv.length ? `<details><summary>받은 동료 피드백 ${s.recv.length}개 보기</summary><ul class="fb">${s.recv.map(r => `<li>${esc(r.feedback)}<div class="who">${esc(r.evaluator)} · ${r.total}/20</div></li>`).join('')}</ul></details>` : ''}
+      <p class="err" id="ferr" role="alert"></p>
+      <div class="submit-row"><div class="total">합계 <b id="ptot">${sum(vals)}</b> / 70점</div>
+        <button class="btn primary" type="submit">교수평가 저장</button></div>
+    </form></div>`;
+}
+function bindAdminProf() {
+  document.querySelectorAll('[data-ps]').forEach(b => b.onclick = () => { S.profSel = b.dataset.ps; renderAdmin('prof'); });
+  const setV = (k, v) => {
+    const max = PROF_ITEMS[k].max; v = Math.max(0, Math.min(max, v));
+    FORM.vals[k] = v;
+    const rg = $('#rg' + k); rg.value = v; rg.style.setProperty('--pct', (v / max * 100) + '%');
+    $('#ov' + k).innerHTML = `${v}<small> / ${max}</small>`;
+    document.querySelectorAll('#meter i')[k].style.width = (v / max * 100) + '%';
+    $('#ptot').textContent = sum(FORM.vals); $('#ptot2').textContent = sum(FORM.vals);
+  };
+  document.querySelectorAll('.rng').forEach(r => r.addEventListener('input', () => setV(+r.dataset.k, +r.value)));
+  document.querySelectorAll('.step').forEach(b => b.onclick = () => setV(+b.dataset.k, FORM.vals[+b.dataset.k] + (+b.dataset.d)));
+  $('#profForm').onsubmit = async e => {
+    e.preventDefault();
+    const name = FORM.target;
+    try {
+      const r = await api('adminSaveProf', { p:S.p, adminPw:S.adminPw, target:name, scores:FORM.vals, memo:$('#memo').value.trim() });
+      S.admin = r.data;
+      const R = results(), next = R.find(x => x.prof === null);
+      toast(`${name} 학생 교수평가 ${sum(r.data.profs.find(x => x.name === name).scores)}점을 저장했습니다.`);
+      renderAdmin('prof');
+      if (next) { const nb = document.querySelector(`[data-ps="${CSS.escape(next.name)}"]`); if (nb) nb.scrollIntoView({ block:'nearest', inline:'nearest' }); }
+    } catch (err) { $('#ferr').textContent = err.message; }
+  };
+}
+
+/* 결과 */
+function adminResultHTML() {
+  const R = results();
+  const peerDone = R.filter(r => r.given >= r.need).length;
+  const selfDone = R.filter(r => r.self !== null).length;
+  const profDone = R.filter(r => r.prof !== null).length;
+  return `<div class="head"><div><h2>평가 결과</h2>
+    <p class="muted" style="margin:4px 0 0">상호평가 완료 ${peerDone}명 · 자기평가 제출 ${selfDone}명 · 교수평가 입력 ${profDone}명 (전체 ${R.length}명)</p></div>
+    <div style="display:flex;gap:8px"><button class="btn" id="reload">새로고침</button><button class="btn primary" id="xls">엑셀 다운로드</button></div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>이름</th><th class="num">교수(70)</th><th class="num">상호 평균(20)</th><th class="num">받은 평가</th><th class="num">자체(10)</th><th class="num">총점(100)</th><th class="num">상호평가 참여</th></tr></thead><tbody>
+    ${R.map(r => `<tr class="${r.excluded ? 'excl' : ''}"><td><button class="row-btn" data-row="${esc(r.name)}" aria-expanded="${S.openRow === r.name}">${esc(r.name)}</button>${r.excluded ? ' <span class="pill off">제외</span>' : ''}</td>
+      <td class="num">${r.prof ?? '—'}</td><td class="num">${fmt(r.peerAvg, 2)}</td><td class="num">${r.recv.length}</td><td class="num">${r.self ?? '—'}</td>
+      <td class="num"><b>${fmt(r.total, 2)}</b></td><td class="num">${r.given} / ${r.need}</td></tr>
+      ${S.openRow === r.name ? `<tr class="detail-row"><td colspan="7">
+        <h4>받은 동료 피드백</h4>${r.recv.length ? `<ul class="fb">${r.recv.map(x => `<li>${esc(x.feedback)}<div class="who">${esc(x.evaluator)} · ${x.scores.join(' / ')} → ${x.total}점</div></li>`).join('')}</ul>` : '<p class="muted small">아직 없습니다.</p>'}
+        <h4 style="margin-top:14px">자기평가</h4>${r.selfRec ? `<ul class="fb">${['목표 사용자와 사용 이유','구현한 기능 / 못한 기능','어려웠던 점','배운 점','다음에 적용할 점'].map((l,i) => `<li><div class="who">${l}</div>${esc(r.selfRec.texts[i])}</li>`).join('')}</ul>` : '<p class="muted small">아직 제출하지 않았습니다.</p>'}
+      </td></tr>` : ''}`).join('')}
+    </tbody></table></div>
+    <p class="muted small">이름을 누르면 받은 피드백과 자기평가 서술을 볼 수 있습니다. 총점은 교수평가 + 상호평가 평균 + 자체평가입니다.</p>`;
+}
+function bindAdminResult() {
+  document.querySelectorAll('[data-row]').forEach(b => b.onclick = () => { S.openRow = S.openRow === b.dataset.row ? null : b.dataset.row; renderAdmin('result'); });
+  $('#xls').onclick = downloadExcel;
+  $('#reload').onclick = async () => {
+    try { const r = await api('adminLogin', { p:S.p, adminPw:S.adminPw }); S.admin = r.data; renderAdmin('result'); toast('최신 결과를 불러왔습니다.'); }
+    catch (err) { toast(err.message); }
+  };
+}
+function downloadExcel() {
+  if (typeof XLSX === 'undefined') { toast('엑셀 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도하세요.'); return; }
+  const A = S.admin, R = results(), wb = XLSX.utils.book_new();
+  const r2 = v => v === null ? '' : Math.round(v * 100) / 100;
+  const t = v => v ? new Date(v).toLocaleString('ko-KR') : '';
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+    ['이름','학번','평가 제외','교수평가(70)','상호평가 평균(20)','받은 상호평가 수','자체평가(10)','총점(100)','상호평가 참여','배포 주소'],
+    ...R.map(r => [r.name, r.sid, r.excluded ? 'O' : '', r.prof ?? '', r2(r.peerAvg), r.recv.length, r.self ?? '', r2(r.total), `${r.given}/${r.need}`, r.url])
+  ]), '종합');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+    ['이름', ...PROF_ITEMS.map(i => `${i.label}(${i.max})`), '합계(70)', '메모', '저장시각'],
+    ...A.profs.map(x => [x.name, ...x.scores, x.total, x.memo, t(x.time)])
+  ]), '교수평가');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+    ['평가자','피평가자', ...PEER_ITEMS.map(i => `${i.label}(${i.max})`), '합계(20)', '피드백', '제출시각'],
+    ...A.peers.map(x => [x.evaluator, x.target, ...x.scores, x.total, x.feedback, t(x.time)])
+  ]), '상호평가 상세');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+    ['이름', ...SELF_ITEMS.map(i => `${i.label}(${i.max})`), '합계(10)', '목표 사용자와 사용 이유','구현한 기능 / 못한 기능','어려웠던 점','배운 점','다음에 적용할 점','제출시각'],
+    ...A.selves.map(x => [x.name, ...x.scores, x.total, ...x.texts, t(x.time)])
+  ]), '자기평가');
+  const d = new Date();
+  XLSX.writeFile(wb, `프로젝트I_평가결과_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.xlsx`);
+}
+
+/* 비밀번호 */
+function adminPwHTML() {
+  return `<div class="pw-box"><h3>프로젝트 I 입장 비밀번호</h3>
+    <p class="muted small" style="margin:6px 0 0">학생들이 프로젝트 I에 들어갈 때 입력하는 비밀번호입니다.</p>
+    <div class="cur">현재: ${esc(S.admin.gatePw)}</div>
+    <form id="pwForm" novalidate>
+      <div class="field"><label for="np1">새 비밀번호</label><input type="text" id="np1" autocomplete="off"></div>
+      <div class="field"><label for="np2">새 비밀번호 확인</label><input type="text" id="np2" autocomplete="off"></div>
+      <p class="err" id="ferr" role="alert"></p>
+      <div class="row-end"><button class="btn primary" type="submit">비밀번호 변경</button></div>
+    </form></div>`;
+}
+function bindAdminPw() {
+  $('#pwForm').onsubmit = async e => {
+    e.preventDefault();
+    const a = $('#np1').value.trim(), b = $('#np2').value.trim();
+    if (a.length < 4) { $('#ferr').textContent = '비밀번호는 4자 이상으로 정해 주세요.'; return; }
+    if (a !== b) { $('#ferr').textContent = '두 비밀번호가 서로 다릅니다.'; return; }
+    try { const r = await api('adminSetGatePw', { p:S.p, adminPw:S.adminPw, newPw:a }); S.admin = r.data; renderAdmin('pw'); toast('입장 비밀번호를 변경했습니다.'); }
+    catch (err) { $('#ferr').textContent = err.message; }
+  };
+}
+
+/* ===== 시작 ===== */
+(async function init() {
+  const ss = store;
+  try {
+    if (ss.getItem('adminPw')) {
+      const pw = ss.getItem('adminPw');
+      const r = await api('adminLogin', { p:S.p, adminPw:pw });
+      S.adminPw = pw; S.admin = r.data; return renderAdmin('students');
+    }
+    if (ss.getItem('gatePw')) {
+      const g = ss.getItem('gatePw');
+      const r = await api('gate', { p:S.p, pw:g });
+      S.gatePw = g; S.students = r.students;
+      if (ss.getItem('me') && ss.getItem('sid')) {
+        const r2 = await api('studentLogin', { p:S.p, gatePw:g, name:ss.getItem('me'), sid:ss.getItem('sid') });
+        S.me = ss.getItem('me'); S.sid = ss.getItem('sid'); S.data = r2.data;
+        return renderStudent('peer');
+      }
+      return renderNames();
+    }
+  } catch (e) { ss.clear(); }
+  renderHome();
+})();
+</script>
+</body>
+</html>
