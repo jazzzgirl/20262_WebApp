@@ -171,9 +171,10 @@ summary{cursor:pointer;font-weight:500;color:var(--civic)}
 .fb li{padding:10px 0;border-bottom:1px dashed var(--line);font-size:.9375rem}
 .fb .who{font-size:.8125rem;color:var(--muted)}
 
-.detail-row td{background:#FAFBFC}
-.detail-row h4{margin:6px 0;font-size:.9375rem}
-.row-btn{background:none;border:0;padding:0;cursor:pointer;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+.mini{display:flex;align-items:center;justify-content:flex-end;gap:10px;white-space:nowrap}
+.mtrack{display:inline-block;width:72px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.mfill{display:block;height:100%;background:var(--civic)}
+.miss{display:flex;flex-wrap:wrap;gap:6px}
 
 .pw-box{max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px;margin-top:20px}
 .pw-box .cur{font-size:1.25rem;font-weight:700;margin:4px 0 18px;font-variant-numeric:tabular-nums}
@@ -216,7 +217,7 @@ summary{cursor:pointer;font-weight:500;color:var(--civic)}
 
 <script>
 /* ===== Apps Script 웹 앱 주소를 여기에 붙여넣으세요 ===== */
-const API_URL = 'https://script.google.com/macros/s/AKfycbzNpdQVad6yPHc2tYF_9j6kFy6tZSGqPk4FqfWaEx_Lln1kvpaDMZ-ay3Lc4dko1E5A/exec';
+const API_URL = '여기에_Apps_Script_웹앱_URL을_붙여넣으세요';
 
 const COURSE = '2026학년도 2학기 메타버스 콘텐츠 프로젝트';
 const TITLE = 'AI와 공공데이터를 활용한 웹 앱 개발';
@@ -251,7 +252,7 @@ const PROF_ITEMS = [
 ];
 const MIN_TEXT = 10;
 
-const S = { p:'p1', gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null, profSel:null, openRow:null };
+const S = { p:'p1', gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null, profSel:null, onlyTodo:false };
 let FORM = null;
 const store = (() => { try { const t = window.sessionStorage; t.setItem('_t','1'); t.removeItem('_t'); return t; } catch (e) { const m = {}; return { getItem:k => k in m ? m[k] : null, setItem:(k,v) => { m[k] = String(v); }, removeItem:k => { delete m[k]; }, clear:() => { for (const k in m) delete m[k]; } }; } })();
 
@@ -346,7 +347,7 @@ function renderNames() {
   <main class="wrap">
     <div class="head"><div><h2>본인 이름을 선택하세요</h2><p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
     <div class="names">${S.students.map(n => `<button class="name-btn" data-n="${esc(n)}">${esc(n)}</button>`).join('')}</div>
-    <div class="back"><button class="link" id="home">처음으로</button></div>
+    <div class="back"><button class="btn" id="home">처음으로</button></div>
   </main>`);
   document.querySelectorAll('.name-btn').forEach(b => b.onclick = () => openStudentLogin(b.dataset.n));
   $('#adminBtn').onclick = openAdminLogin;
@@ -545,10 +546,11 @@ function results() {
 
 function renderAdmin(tab) {
   FORM = null;
-  const tabs = [['students','학생 설정'],['prof','교수 평가'],['result','결과'],['pw','비밀번호']];
+  const tabs = [['students','학생 설정'],['prof','교수 평가'],['status','평가 현황'],['result','결과'],['pw','비밀번호']];
   let body = '';
   if (tab === 'students') body = adminStudentsHTML();
   if (tab === 'prof') body = adminProfHTML();
+  if (tab === 'status') body = adminStatusHTML();
   if (tab === 'result') body = adminResultHTML();
   if (tab === 'pw') body = adminPwHTML();
   app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn on-dark" id="logout">나가기</button>`)}
@@ -560,7 +562,9 @@ function renderAdmin(tab) {
   document.querySelectorAll('[data-atab]').forEach(b => b.onclick = () => renderAdmin(b.dataset.atab));
   if (tab === 'students') bindAdminStudents();
   if (tab === 'prof') bindAdminProf();
+  if (tab === 'status') bindAdminStatus();
   if (tab === 'result') bindAdminResult();
+  if ($('#reload')) $('#reload').onclick = () => reloadAdmin(tab);
   if (tab === 'pw') bindAdminPw();
 }
 
@@ -660,23 +664,47 @@ function adminResultHTML() {
     <p class="muted" style="margin:4px 0 0">상호평가 완료 ${peerDone}명 · 자기평가 제출 ${selfDone}명 · 교수평가 입력 ${profDone}명 (전체 ${R.length}명)</p></div>
     <div style="display:flex;gap:8px"><button class="btn" id="reload">새로고침</button><button class="btn primary" id="xls">엑셀 다운로드</button></div></div>
     <div class="tbl-wrap"><table><thead><tr><th>이름</th><th class="num">교수(70)</th><th class="num">상호 평균(20)</th><th class="num">받은 평가</th><th class="num">자체(10)</th><th class="num">총점(100)</th><th class="num">상호평가 참여</th></tr></thead><tbody>
-    ${R.map(r => `<tr class="${r.excluded ? 'excl' : ''}"><td><button class="row-btn" data-row="${esc(r.name)}" aria-expanded="${S.openRow === r.name}">${esc(r.name)}</button>${r.excluded ? ' <span class="pill off">제외</span>' : ''}</td>
+    ${R.map(r => `<tr class="${r.excluded ? 'excl' : ''}"><td><b>${esc(r.name)}</b>${r.excluded ? ' <span class="pill off">제외</span>' : ''}</td>
       <td class="num">${r.prof ?? '—'}</td><td class="num">${fmt(r.peerAvg, 2)}</td><td class="num">${r.recv.length}</td><td class="num">${r.self ?? '—'}</td>
-      <td class="num"><b>${fmt(r.total, 2)}</b></td><td class="num">${r.given} / ${r.need}</td></tr>
-      ${S.openRow === r.name ? `<tr class="detail-row"><td colspan="7">
-        <h4>받은 동료 피드백</h4>${r.recv.length ? `<ul class="fb">${r.recv.map(x => `<li>${esc(x.feedback)}<div class="who">${esc(x.evaluator)} · ${x.scores.join(' / ')} → ${x.total}점</div></li>`).join('')}</ul>` : '<p class="muted small">아직 없습니다.</p>'}
-        <h4 style="margin-top:14px">자기평가</h4>${r.selfRec ? `<ul class="fb">${['목표 사용자와 사용 이유','구현한 기능 / 못한 기능','어려웠던 점','배운 점','다음에 적용할 점'].map((l,i) => `<li><div class="who">${l}</div>${esc(r.selfRec.texts[i])}</li>`).join('')}</ul>` : '<p class="muted small">아직 제출하지 않았습니다.</p>'}
-      </td></tr>` : ''}`).join('')}
+      <td class="num"><b>${fmt(r.total, 2)}</b></td><td class="num">${r.given} / ${r.need}</td></tr>`).join('')}
     </tbody></table></div>
-    <p class="muted small">이름을 누르면 받은 피드백과 자기평가 서술을 볼 수 있습니다. 총점은 교수평가 + 상호평가 평균 + 자체평가입니다.</p>`;
+    <p class="muted small">총점은 교수평가 + 상호평가 평균 + 자체평가입니다.</p>`;
 }
 function bindAdminResult() {
-  document.querySelectorAll('[data-row]').forEach(b => b.onclick = () => { S.openRow = S.openRow === b.dataset.row ? null : b.dataset.row; renderAdmin('result'); });
   $('#xls').onclick = downloadExcel;
-  $('#reload').onclick = async () => {
-    try { const r = await api('adminLogin', { p:S.p, adminPw:S.adminPw }); S.admin = r.data; renderAdmin('result'); toast('최신 결과를 불러왔습니다.'); }
-    catch (err) { toast(err.message); }
-  };
+}
+async function reloadAdmin(tab) {
+  try { const r = await api('adminLogin', { p:S.p, adminPw:S.adminPw }); S.admin = r.data; renderAdmin(tab); toast('최신 평가 상황을 불러왔습니다.'); }
+  catch (err) { toast(err.message); }
+}
+
+/* 평가 현황 */
+function adminStatusHTML() {
+  const A = S.admin;
+  const rows = A.students.map(s => {
+    const targets = A.students.filter(x => x.name !== s.name && !x.excluded);
+    const missing = targets.filter(x => !A.peers.some(p => p.evaluator === s.name && p.target === x.name)).map(x => x.name);
+    const self = A.selves.some(x => x.name === s.name);
+    return { ...s, need: targets.length, given: targets.length - missing.length, missing, self, done: !missing.length && self };
+  });
+  const peerDone = rows.filter(r => !r.missing.length).length;
+  const selfDone = rows.filter(r => r.self).length;
+  const shown = S.onlyTodo ? rows.filter(r => !r.done) : rows;
+  return `<div class="head"><div><h2>평가 현황</h2>
+    <p class="muted" style="margin:4px 0 0">상호평가 완료 ${peerDone}명, 자기평가 제출 ${selfDone}명 (전체 ${rows.length}명)</p></div>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><label class="chk"><input type="checkbox" id="onlyTodo" ${S.onlyTodo ? 'checked' : ''} style="accent-color:var(--civic)">미완료 학생만 보기</label>
+    <button class="btn" id="reload">새로고침</button></div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>이름</th><th class="num">상호평가</th><th>자기평가</th><th style="min-width:260px">아직 평가하지 않은 학생</th></tr></thead><tbody>
+    ${shown.length ? shown.map(r => `<tr><td><b>${esc(r.name)}</b>${r.excluded ? ' <span class="pill off">제외</span>' : ''}</td>
+      <td class="num"><div class="mini"><span class="mtrack"><span class="mfill" style="width:${r.need ? r.given / r.need * 100 : 100}%"></span></span>${r.given} / ${r.need}</div></td>
+      <td>${r.self ? '<span class="pill done">제출</span>' : '<span class="pill todo">미제출</span>'}</td>
+      <td>${r.missing.length ? `<div class="miss">${r.missing.map(n => `<span class="pill todo">${esc(n)}</span>`).join('')}</div>` : '<span class="muted small">모두 평가함</span>'}</td></tr>`).join('')
+      : '<tr><td colspan="4" class="muted">모든 학생이 상호평가와 자기평가를 마쳤습니다.</td></tr>'}
+    </tbody></table></div>
+    <p class="muted small">평가 제외 학생은 평가 대상이 아니므로 '아직 평가하지 않은 학생'에 표시되지 않습니다. 학생들이 제출하는 중이라면 새로고침을 눌러 최신 상황을 확인하세요.</p>`;
+}
+function bindAdminStatus() {
+  $('#onlyTodo').onchange = e => { S.onlyTodo = e.target.checked; renderAdmin('status'); };
 }
 function downloadExcel() {
   if (typeof XLSX === 'undefined') { toast('엑셀 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도하세요.'); return; }
