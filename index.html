@@ -18,7 +18,8 @@
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
 button,input,textarea{font:inherit;color:inherit}
-a{color:var(--civic)}
+a{color:var(--civic);text-decoration:none}
+a:hover{text-decoration:none}
 :focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 .wrap{max-width:980px;margin:0 auto;padding:28px 20px 96px}
 .muted{color:var(--muted)}
@@ -33,14 +34,15 @@ h1,h2,h3{line-height:1.3;margin:0}
 .band .who{display:flex;align-items:center;gap:10px;font-size:.9375rem}
 
 /* 버튼 */
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:10px 18px;cursor:pointer;font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:42px;padding:0 18px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;font-weight:500;font-size:.9375rem;line-height:1;white-space:nowrap;text-decoration:none;transition:background .12s,border-color .12s}
+.btn.sm{height:34px;padding:0 14px;font-size:.875rem}
 .btn:hover{border-color:var(--civic)}
 .btn.primary{background:var(--civic);border-color:var(--civic);color:#fff}
 .btn.primary:hover{background:var(--civic-deep)}
 .btn.ghost{background:transparent}
-.btn.on-dark{background:transparent;border-color:rgba(255,255,255,.4);color:#fff;padding:6px 12px}
+.btn.on-dark{background:transparent;border-color:rgba(255,255,255,.45);color:#fff}
+.btn.on-dark:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.link{background:none;border:0;padding:0;color:var(--civic);cursor:pointer;font-weight:500;text-decoration:underline;text-underline-offset:3px}
 
 /* 홈 */
 .hero{padding:56px 0 36px}
@@ -55,7 +57,7 @@ h1,h2,h3{line-height:1.3;margin:0}
 .proj{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:16px;width:100%;padding:20px 8px;background:none;border:0;text-align:left;cursor:pointer}
 .proj .no{font-size:1.75rem;font-weight:700;color:var(--civic);font-variant-numeric:tabular-nums}
 .proj strong{display:block;font-size:1.125rem}
-.proj .state{font-size:.875rem;font-weight:500;padding:4px 12px;border-radius:999px;background:var(--civic);color:#fff}
+.proj .state{display:inline-flex;align-items:center;height:34px;padding:0 14px;font-size:.875rem;font-weight:500;border-radius:6px;border:1px solid var(--civic);background:var(--civic);color:#fff;white-space:nowrap}
 .proj:hover:not(:disabled){background:var(--civic-weak)}
 .proj:disabled{cursor:default}
 .proj:disabled .no{color:var(--line)}
@@ -91,15 +93,18 @@ h1,h2,h3{line-height:1.3;margin:0}
 .target:disabled{background:transparent;border-style:dashed;cursor:not-allowed}
 .target .nm{font-weight:700}
 .target .sub{display:block;font-size:.8125rem;color:var(--muted);margin-top:2px}
-.pill{font-size:.8125rem;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap}
-.pill.done{background:var(--civic-weak);color:var(--civic-deep)}
-.pill.todo{background:var(--signal-weak);color:#7A5B00}
-.pill.off{background:var(--danger-weak);color:var(--danger)}
+.pill{display:inline-flex;align-items:center;height:26px;padding:0 10px;font-size:.8125rem;font-weight:500;border-radius:6px;border:1px solid transparent;white-space:nowrap;line-height:1}
+.pill.lg{height:34px;padding:0 12px;font-size:.875rem}
+.pill.done{background:var(--civic-weak);border-color:#B5D6D4;color:var(--civic-deep)}
+.pill.todo{background:var(--signal-weak);border-color:#EED78A;color:#7A5B00}
+.pill.none{background:var(--bg);border-color:var(--line);color:var(--muted)}
+.pill.off{background:var(--danger-weak);border-color:#EBBDB8;color:var(--danger)}
 
 /* 평가 양식 */
 .form{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:28px;margin-top:16px}
 .form-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
 .form-top h2{font-size:1.5rem}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .item{border:0;margin:0;padding:22px 0;border-bottom:1px solid var(--line)}
 .item legend{padding:0;display:flex;justify-content:space-between;gap:12px;width:100%;font-weight:700;font-size:1.0625rem}
 .item legend .mx{font-weight:500;color:var(--muted);font-size:.9375rem;white-space:nowrap}
@@ -107,7 +112,7 @@ h1,h2,h3{line-height:1.3;margin:0}
 
 /* 점수 막대 (선택형) */
 .bar{display:flex;gap:4px;max-width:560px}
-.seg{flex:1;min-width:0;height:44px;border:1px solid var(--line);background:var(--bg);border-radius:4px;cursor:pointer;font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted);transition:background .12s,color .12s}
+.seg{flex:1;min-width:0;height:44px;border:1px solid var(--line);background:var(--bg);border-radius:6px;cursor:pointer;font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted);transition:background .12s,color .12s}
 .seg:hover{border-color:var(--civic)}
 .seg.on{background:var(--civic);border-color:var(--civic);color:#fff}
 .seg.cur{background:var(--signal);border-color:#C99500;color:var(--ink);font-weight:700}
@@ -302,13 +307,17 @@ function openModal({ title, desc, type = 'password', inputmode = 'text', placeho
 function closeModal() { $('#modal').hidden = true; $('#modal').innerHTML = ''; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
 
+function appBtn(url) {
+  return url ? `<a class="btn primary sm" href="${esc(url)}" target="_blank" rel="noopener">앱 열어 보기</a>`
+             : '<span class="pill lg none">앱 주소 미등록</span>';
+}
 function band(right = '', wide = false) {
   return `<header class="band"><div class="wrap${wide ? ' wide' : ''}"><div><div class="course">${esc(COURSE)}</div><div class="title">${esc(TITLE)}</div></div><div class="who">${right}</div></div></header>`;
 }
 
 /* ===== 홈 ===== */
 function renderHome() {
-  app(`${band('<button class="btn on-dark" id="adminBtn">교수자 메뉴</button>')}
+  app(`${band('<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>')}
   <main class="wrap">
     <section class="hero">
       <h1>공공데이터로 만든 앱, 실제로 쓸 만한가요?</h1>
@@ -341,7 +350,7 @@ function openGate(p) {
 
 /* ===== 이름 선택 ===== */
 function renderNames() {
-  app(`${band('<button class="btn on-dark" id="adminBtn">교수자 메뉴</button>')}
+  app(`${band('<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>')}
   <main class="wrap">
     <div class="head"><div><h2>본인 이름을 선택하세요</h2><p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
     <div class="names">${S.students.map(n => `<button class="name-btn" data-n="${esc(n)}">${esc(n)}</button>`).join('')}</div>
@@ -391,7 +400,7 @@ function renderStudent(tab) {
   } else {
     body = selfFormHTML();
   }
-  app(`${band(`<span>${esc(S.me)}</span><button class="btn on-dark" id="logout">나가기</button>`)}
+  app(`${band(`<span>${esc(S.me)}</span><button class="btn sm on-dark" id="logout">나가기</button>`)}
   <main class="wrap">${tabs}${body}</main>`);
   $('#logout').onclick = logoutStudent;
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => renderStudent(b.dataset.tab));
@@ -437,13 +446,13 @@ function bindCounter(ta) {
 function renderPeerForm(name) {
   const d = S.data, t = d.targets.find(x => x.name === name), prev = d.peers[name];
   FORM = { kind:'peer', target:name, vals: prev ? prev.scores.slice() : PEER_ITEMS.map(() => null) };
-  app(`${band(`<span>${esc(S.me)}</span><button class="btn on-dark" id="logout">나가기</button>`)}
+  app(`${band(`<span>${esc(S.me)}</span><button class="btn sm on-dark" id="logout">나가기</button>`)}
   <main class="wrap">
     <div class="back" style="margin-top:8px"><button class="btn" id="toList">평가 목록으로</button></div>
     <form class="form" id="pform" novalidate>
       <div class="form-top">
         <div><p class="muted small" style="margin:0">상호평가 · 20점</p><h2>${esc(name)}</h2></div>
-        ${t.url ? `<a class="btn primary" href="${esc(t.url)}" target="_blank" rel="noopener">앱 열어 보기</a>` : '<span class="muted small">앱 주소가 아직 등록되지 않았습니다</span>'}
+        <div class="top-actions">${appBtn(t.url)}</div>
       </div>
       ${PEER_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
         <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}</fieldset>`).join('')}
@@ -481,7 +490,7 @@ function selfFormHTML() {
   let ti = 0;
   return `<form class="form" id="sform" novalidate>
     <div class="form-top"><div><p class="muted small" style="margin:0">자기평가 · 10점</p><h2>내 앱 점검하기</h2></div>
-      ${prev ? '<span class="pill done">제출 완료 · 수정 가능</span>' : ''}</div>
+      ${prev ? '<div class="top-actions"><span class="pill lg done">제출 완료 · 수정 가능</span></div>' : ''}</div>
     ${SELF_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
       <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}
       ${it.texts.map(tx => { const i = ti++; return `<div class="field"><label for="st${i}">${esc(tx.label)}<span class="req">필수</span></label>
@@ -550,7 +559,7 @@ function renderAdmin(tab) {
   if (tab === 'prof') body = adminProfHTML();
   if (tab === 'status') body = adminStatusHTML();
   if (tab === 'result') body = adminResultHTML();
-  app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn on-dark" id="logout">나가기</button>`, true)}
+  app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn sm on-dark" id="logout">나가기</button>`, true)}
   <main class="wrap wide">
     <div class="tabs" role="tablist">${tabs.map(([k,l]) => `<button class="tab" role="tab" aria-selected="${tab===k}" data-atab="${k}">${l}</button>`).join('')}</div>
     ${body}
@@ -604,10 +613,10 @@ function adminProfHTML() {
       <span>${esc(x.name)}${x.excluded ? ' · 제외' : ''}</span><span class="sc">${x.prof === null ? '미입력' : x.prof + '점'}</span></button></li>`).join('')}</ul>
     <form class="form" id="profForm" style="margin-top:0" novalidate>
       <div class="form-top"><div><p class="muted small" style="margin:0">교수평가 · 70점</p><h2>${esc(s.name)}</h2></div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        ${s.excluded ? '<span class="pill off">평가 제외(상호평가)</span>' : ''}
-        ${s.prof === null ? '<span class="pill todo">미저장</span>' : '<span class="pill done">저장됨</span>'}
-        ${s.url ? `<a class="btn" href="${esc(s.url)}" target="_blank" rel="noopener">앱 열기</a>` : ''}</div></div>
+        <div class="top-actions">
+        ${s.excluded ? '<span class="pill lg off">평가 제외(상호평가)</span>' : ''}
+        ${s.prof === null ? '<span class="pill lg todo">미저장</span>' : '<span class="pill lg done">저장됨</span>'}
+        ${appBtn(s.url)}</div></div>
       <div class="ref"><div>상호평가 평균<b>${fmt(s.peerAvg, 2)}</b>${s.recv.length}명 평가</div><div>자기평가<b>${s.self ?? '—'}</b>/ 10</div><div>현재 교수평가<b id="ptot2">${sum(vals)}</b>/ 70</div></div>
       <div class="meter" id="meter" aria-hidden="true">${PROF_ITEMS.map((it,k) => `<span style="flex:${it.max}"><i style="width:${vals[k]/it.max*100}%"></i></span>`).join('')}</div>
       ${PROF_ITEMS.map((it, k) => `<div class="item"><div style="display:flex;justify-content:space-between;gap:12px;font-weight:700"><label for="rg${k}">${esc(it.label)}</label><span class="muted" style="font-weight:500">${it.max}점</span></div>
