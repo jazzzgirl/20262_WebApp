@@ -108,11 +108,9 @@ h1,h2,h3{line-height:1.3;margin:0}
 /* 점수 막대 (선택형) */
 .bar{display:flex;gap:4px;max-width:560px}
 .seg{flex:1;min-width:0;height:44px;border:1px solid var(--line);background:var(--bg);border-radius:4px;cursor:pointer;font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted);transition:background .12s,color .12s}
-.seg.zero{flex:0 0 44px}
 .seg:hover{border-color:var(--civic)}
 .seg.on{background:var(--civic);border-color:var(--civic);color:#fff}
 .seg.cur{background:var(--signal);border-color:#C99500;color:var(--ink);font-weight:700}
-.seg.zero.cur{background:var(--ink);border-color:var(--ink);color:#fff}
 
 textarea{width:100%;min-height:120px;resize:vertical;border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:var(--surface);line-height:1.6}
 textarea:focus{border-color:var(--civic);outline:none;box-shadow:0 0 0 3px var(--civic-weak)}
@@ -141,9 +139,10 @@ input[type=url]:focus,input[type=text]:focus,input[type=password]:focus{border-c
 .chk input{width:18px;height:18px;accent-color:var(--danger)}
 .sticky-save{position:sticky;bottom:0;background:var(--bg);padding:14px 0;display:flex;justify-content:flex-end;gap:12px;align-items:center}
 
-.split{display:grid;grid-template-columns:240px 1fr;gap:20px;margin-top:20px;align-items:start}
-.plist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;max-height:70vh;overflow:auto}
-.plist button{width:100%;display:flex;justify-content:space-between;gap:8px;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer}
+.wrap.wide{max-width:1180px}
+.split{display:grid;grid-template-columns:300px 1fr;gap:20px;margin-top:20px;align-items:start}
+.plist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.plist button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;white-space:nowrap;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer}
 .plist button:hover{background:var(--civic-weak)}
 .plist button[aria-current="true"]{background:var(--ink);color:#fff}
 .plist .sc{font-variant-numeric:tabular-nums;font-size:.875rem}
@@ -199,12 +198,11 @@ summary{cursor:pointer;font-weight:500;color:var(--civic)}
   .hero{padding:36px 0 24px}
   .form{padding:20px 16px}
   .split{grid-template-columns:1fr}
-  .plist{max-height:none;display:flex;overflow-x:auto;border-radius:6px}
+  .plist{display:flex;overflow-x:auto;border-radius:6px}
   .plist li{flex:0 0 auto}
   .plist button{border-bottom:0;border-right:1px solid var(--line);white-space:nowrap}
   .ref{grid-template-columns:1fr 1fr 1fr}
   .seg{height:40px}
-  .seg.zero{flex-basis:36px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -304,8 +302,8 @@ function openModal({ title, desc, type = 'password', inputmode = 'text', placeho
 function closeModal() { $('#modal').hidden = true; $('#modal').innerHTML = ''; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
 
-function band(right = '') {
-  return `<header class="band"><div class="wrap"><div><div class="course">${esc(COURSE)}</div><div class="title">${esc(TITLE)}</div></div><div class="who">${right}</div></div></header>`;
+function band(right = '', wide = false) {
+  return `<header class="band"><div class="wrap${wide ? ' wide' : ''}"><div><div class="course">${esc(COURSE)}</div><div class="title">${esc(TITLE)}</div></div><div class="who">${right}</div></div></header>`;
 }
 
 /* ===== 홈 ===== */
@@ -404,8 +402,8 @@ function renderStudent(tab) {
 /* 점수 막대 */
 function scoreBar(idx, max, val, label) {
   let h = `<div class="bar" role="radiogroup" aria-label="${esc(label)}" data-idx="${idx}">`;
-  for (let i = 0; i <= max; i++) {
-    const cls = ['seg', i === 0 ? 'zero' : '', (val !== null && i > 0 && i < val) ? 'on' : '', val === i ? 'cur' : ''].join(' ');
+  for (let i = 1; i <= max; i++) {
+    const cls = ['seg', (val !== null && i < val) ? 'on' : '', val === i ? 'cur' : ''].join(' ');
     h += `<button type="button" class="${cls}" data-v="${i}" role="radio" aria-checked="${val === i}" aria-label="${i}점">${i}</button>`;
   }
   return h + '</div>';
@@ -413,7 +411,7 @@ function scoreBar(idx, max, val, label) {
 function paintBar(bar, v) {
   bar.querySelectorAll('.seg').forEach(s => {
     const i = +s.dataset.v;
-    s.classList.toggle('on', i > 0 && i < v);
+    s.classList.toggle('on', i < v);
     s.classList.toggle('cur', i === v);
     s.setAttribute('aria-checked', i === v);
   });
@@ -441,7 +439,7 @@ function renderPeerForm(name) {
   FORM = { kind:'peer', target:name, vals: prev ? prev.scores.slice() : PEER_ITEMS.map(() => null) };
   app(`${band(`<span>${esc(S.me)}</span><button class="btn on-dark" id="logout">나가기</button>`)}
   <main class="wrap">
-    <div class="back" style="margin-top:8px"><button class="link" id="toList">평가 목록으로</button></div>
+    <div class="back" style="margin-top:8px"><button class="btn" id="toList">평가 목록으로</button></div>
     <form class="form" id="pform" novalidate>
       <div class="form-top">
         <div><p class="muted small" style="margin:0">상호평가 · 20점</p><h2>${esc(name)}</h2></div>
@@ -546,15 +544,14 @@ function results() {
 
 function renderAdmin(tab) {
   FORM = null;
-  const tabs = [['students','학생 설정'],['prof','교수 평가'],['status','평가 현황'],['result','결과'],['pw','비밀번호']];
+  const tabs = [['students','학생 설정'],['prof','교수 평가'],['status','평가 현황'],['result','결과']];
   let body = '';
   if (tab === 'students') body = adminStudentsHTML();
   if (tab === 'prof') body = adminProfHTML();
   if (tab === 'status') body = adminStatusHTML();
   if (tab === 'result') body = adminResultHTML();
-  if (tab === 'pw') body = adminPwHTML();
-  app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn on-dark" id="logout">나가기</button>`)}
-  <main class="wrap">
+  app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn on-dark" id="logout">나가기</button>`, true)}
+  <main class="wrap wide">
     <div class="tabs" role="tablist">${tabs.map(([k,l]) => `<button class="tab" role="tab" aria-selected="${tab===k}" data-atab="${k}">${l}</button>`).join('')}</div>
     ${body}
   </main>`);
@@ -565,7 +562,6 @@ function renderAdmin(tab) {
   if (tab === 'status') bindAdminStatus();
   if (tab === 'result') bindAdminResult();
   if ($('#reload')) $('#reload').onclick = () => reloadAdmin(tab);
-  if (tab === 'pw') bindAdminPw();
 }
 
 /* 학생 설정 */
@@ -729,29 +725,6 @@ function downloadExcel() {
   ]), '자기평가');
   const d = new Date();
   XLSX.writeFile(wb, `프로젝트I_평가결과_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.xlsx`);
-}
-
-/* 비밀번호 */
-function adminPwHTML() {
-  return `<div class="pw-box"><h3>프로젝트 I 입장 비밀번호</h3>
-    <p class="muted small" style="margin:6px 0 0">학생들이 프로젝트 I에 들어갈 때 입력하는 비밀번호입니다.</p>
-    <div class="cur">현재: ${esc(S.admin.gatePw)}</div>
-    <form id="pwForm" novalidate>
-      <div class="field"><label for="np1">새 비밀번호</label><input type="text" id="np1" autocomplete="off"></div>
-      <div class="field"><label for="np2">새 비밀번호 확인</label><input type="text" id="np2" autocomplete="off"></div>
-      <p class="err" id="ferr" role="alert"></p>
-      <div class="row-end"><button class="btn primary" type="submit">비밀번호 변경</button></div>
-    </form></div>`;
-}
-function bindAdminPw() {
-  $('#pwForm').onsubmit = async e => {
-    e.preventDefault();
-    const a = $('#np1').value.trim(), b = $('#np2').value.trim();
-    if (a.length < 4) { $('#ferr').textContent = '비밀번호는 4자 이상으로 정해 주세요.'; return; }
-    if (a !== b) { $('#ferr').textContent = '두 비밀번호가 서로 다릅니다.'; return; }
-    try { const r = await api('adminSetGatePw', { p:S.p, adminPw:S.adminPw, newPw:a }); S.admin = r.data; renderAdmin('pw'); toast('입장 비밀번호를 변경했습니다.'); }
-    catch (err) { $('#ferr').textContent = err.message; }
-  };
 }
 
 /* ===== 시작 ===== */
