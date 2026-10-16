@@ -237,7 +237,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzNpdQVad6yPHc2tYF_9j6k
 const COURSE = '2026학년도 2학기 메타버스 콘텐츠 프로젝트';
 const TITLE = 'AI와 공공데이터를 활용한 웹 앱 개발';
 const PROJECTS = [
-  { id:'p1', no:'I',   name:'프로젝트 I',   open:true, feedback:true },
+  { id:'p1', no:'I',   name:'프로젝트 I',   open:false, feedback:true },
   { id:'p2', no:'II',  name:'프로젝트 II',  open:false },
   { id:'p3', no:'III', name:'프로젝트 III', open:false },
   { id:'p4', no:'IV',  name:'프로젝트 IV',  open:false }
@@ -346,7 +346,7 @@ function renderHome() {
       ${PROJECTS.map(p => `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
         <span class="no">${p.no}</span>
         <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가' : '다음 프로젝트에서 열립니다'}</span></span>
-        <span class="state">${p.open ? '입장하기' : '준비 중'}</span></button></li>
+        <span class="state">${p.open ? '평가 종료' : '준비 중'}</span></button></li>
       ${p.feedback ? `<li class="sub-row"><button class="proj" data-fb="${p.id}">
         <span class="no fbno" aria-hidden="true">↳</span>
         <span><strong>상호평가 ${p.no} 피드백 확인</strong><span class="muted small">동료들이 내 앱에 남긴 피드백을 확인합니다</span></span>
