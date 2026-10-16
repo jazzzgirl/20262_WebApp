@@ -54,6 +54,10 @@ h1,h2,h3{line-height:1.3;margin:0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:0}
 .catalog{list-style:none;margin:8px 0 0;padding:0;border-top:2px solid var(--ink)}
 .catalog li{border-bottom:1px solid var(--line)}
+.catalog .sub-row .proj{padding-top:14px;padding-bottom:14px;background:rgba(220,237,236,.45)}
+.catalog .sub-row .proj:hover{background:var(--civic-weak)}
+.proj .fbno{font-size:1.25rem;color:var(--civic);text-align:center}
+.catalog .sub-row .state{background:var(--surface);color:var(--civic-deep)}
 .proj{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:16px;width:100%;padding:20px 8px;background:none;border:0;text-align:left;cursor:pointer}
 .proj .no{font-size:1.75rem;font-weight:700;color:var(--civic);font-variant-numeric:tabular-nums}
 .proj strong{display:block;font-size:1.125rem}
@@ -180,6 +184,14 @@ summary{cursor:pointer;font-weight:500;color:var(--civic)}
 .mfill{display:block;height:100%;background:var(--civic)}
 .miss{display:flex;flex-wrap:wrap;gap:6px}
 
+.fb-cards{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.fb-cards li{display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+.fb-cards.plain{margin-top:20px}
+.fb-cards.plain li{background:var(--bg);border-color:transparent}
+.fb-cards p{margin:0;white-space:pre-wrap;line-height:1.7}
+.fb-no{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:var(--civic-weak);color:var(--civic-deep);font-weight:700;font-size:.875rem;font-variant-numeric:tabular-nums}
+.fb-meta{margin-top:6px;font-size:.8125rem;color:var(--muted)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:28px;text-align:center;color:var(--muted)}
 .pw-box{max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px;margin-top:20px}
 .pw-box .cur{font-size:1.25rem;font-weight:700;margin:4px 0 18px;font-variant-numeric:tabular-nums}
 
@@ -225,7 +237,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzNpdQVad6yPHc2tYF_9j6k
 const COURSE = '2026학년도 2학기 메타버스 콘텐츠 프로젝트';
 const TITLE = 'AI와 공공데이터를 활용한 웹 앱 개발';
 const PROJECTS = [
-  { id:'p1', no:'I',   name:'프로젝트 I',   open:true },
+  { id:'p1', no:'I',   name:'프로젝트 I',   open:true, feedback:true },
   { id:'p2', no:'II',  name:'프로젝트 II',  open:false },
   { id:'p3', no:'III', name:'프로젝트 III', open:false },
   { id:'p4', no:'IV',  name:'프로젝트 IV',  open:false }
@@ -255,7 +267,7 @@ const PROF_ITEMS = [
 ];
 const MIN_TEXT = 10;
 
-const S = { p:'p1', gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null, profSel:null, onlyTodo:false };
+const S = { p:'p1', gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null, profSel:null, onlyTodo:false, fb:null, fbSel:null };
 let FORM = null;
 const store = (() => { try { const t = window.sessionStorage; t.setItem('_t','1'); t.removeItem('_t'); return t; } catch (e) { const m = {}; return { getItem:k => k in m ? m[k] : null, setItem:(k,v) => { m[k] = String(v); }, removeItem:k => { delete m[k]; }, clear:() => { for (const k in m) delete m[k]; } }; } })();
 
@@ -333,12 +345,62 @@ function renderHome() {
     <ol class="catalog">
       ${PROJECTS.map(p => `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
         <span class="no">${p.no}</span>
-        <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가 진행 중' : '다음 프로젝트에서 열립니다'}</span></span>
-        <span class="state">${p.open ? '입장하기' : '준비 중'}</span></button></li>`).join('')}
+        <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가' : '다음 프로젝트에서 열립니다'}</span></span>
+        <span class="state">${p.open ? '입장하기' : '준비 중'}</span></button></li>
+      ${p.feedback ? `<li class="sub-row"><button class="proj" data-fb="${p.id}">
+        <span class="no fbno" aria-hidden="true">↳</span>
+        <span><strong>상호평가 ${p.no} 피드백 확인</strong><span class="muted small">동료들이 내 앱에 남긴 피드백을 확인합니다</span></span>
+        <span class="state">확인하기</span></button></li>` : ''}`).join('')}
     </ol>
   </main>`);
   document.querySelectorAll('[data-proj]').forEach(b => b.onclick = () => openGate(b.dataset.proj));
+  document.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => openFeedback(b.dataset.fb));
   $('#adminBtn').onclick = openAdminLogin;
+}
+
+/* ===== 상호평가 피드백 확인 (학생) ===== */
+async function openFeedback(p) {
+  try {
+    const r = await api('feedbackNames', { p });
+    S.fb = { p, names: r.students, me: null, list: [] };
+    renderFbNames();
+  } catch (err) { toast(err.message); }
+}
+function fbLabel() { const p = PROJECTS.find(x => x.id === S.fb.p); return `상호평가 ${p.no} 피드백 확인`; }
+function renderFbNames() {
+  app(`${band('<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>')}
+  <main class="wrap">
+    <div class="head"><div><p class="muted small" style="margin:0">${esc(fbLabel())}</p><h2>본인 이름을 선택하세요</h2>
+      <p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
+    <div class="names">${S.fb.names.map(n => `<button class="name-btn" data-n="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+    <div class="back"><button class="btn" id="home">처음으로</button></div>
+  </main>`);
+  document.querySelectorAll('.name-btn').forEach(b => b.onclick = () => openFbLogin(b.dataset.n));
+  $('#adminBtn').onclick = openAdminLogin;
+  $('#home').onclick = () => { S.fb = null; renderHome(); };
+}
+function openFbLogin(name) {
+  openModal({
+    title: `${name} 학생`, desc: '학번을 입력하세요.', inputmode: 'numeric', placeholder: '학번 9자리', submit: '피드백 보기',
+    onSubmit: async sid => {
+      const r = await api('feedbackLogin', { p:S.fb.p, name, sid });
+      S.fb.me = name; S.fb.list = r.feedback;
+      setTimeout(renderFbView);
+    }
+  });
+}
+function renderFbView() {
+  const L = S.fb.list;
+  app(`${band(`<span>${esc(S.fb.me)}</span><button class="btn sm on-dark" id="fbOut">나가기</button>`)}
+  <main class="wrap">
+    <div class="head"><div><p class="muted small" style="margin:0">${esc(fbLabel())}</p><h2>내 앱에 대한 동료 피드백</h2>
+      <p class="muted" style="margin:4px 0 0">${L.length ? `피드백 ${L.length}개가 있습니다. 작성자는 표시되지 않습니다.` : ''}</p></div></div>
+    ${L.length ? `<ol class="fb-cards">${L.map((t, i) => `<li><span class="fb-no">${i + 1}</span><p>${esc(t)}</p></li>`).join('')}</ol>`
+      : '<div class="empty">아직 받은 피드백이 없습니다.</div>'}
+    <div class="back"><button class="btn" id="fbBack">이름 선택으로</button></div>
+  </main>`);
+  const out = () => { S.fb.me = null; S.fb.list = []; renderFbNames(); };
+  $('#fbOut').onclick = out; $('#fbBack').onclick = out;
 }
 
 function openGate(p) {
@@ -558,12 +620,13 @@ function results() {
 
 function renderAdmin(tab) {
   FORM = null;
-  const tabs = [['students','학생 설정'],['prof','교수 평가'],['status','평가 현황'],['result','결과']];
+  const tabs = [['students','학생 설정'],['prof','교수 평가'],['status','평가 현황'],['result','결과'],['feedback','피드백']];
   let body = '';
   if (tab === 'students') body = adminStudentsHTML();
   if (tab === 'prof') body = adminProfHTML();
   if (tab === 'status') body = adminStatusHTML();
   if (tab === 'result') body = adminResultHTML();
+  if (tab === 'feedback') body = adminFeedbackHTML();
   app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn sm on-dark" id="logout">나가기</button>`, true)}
   <main class="wrap wide">
     <div class="tabs" role="tablist">${tabs.map(([k,l]) => `<button class="tab" role="tab" aria-selected="${tab===k}" data-atab="${k}">${l}</button>`).join('')}</div>
@@ -575,6 +638,7 @@ function renderAdmin(tab) {
   if (tab === 'prof') bindAdminProf();
   if (tab === 'status') bindAdminStatus();
   if (tab === 'result') bindAdminResult();
+  if (tab === 'feedback') bindAdminFeedback();
   if ($('#reload')) $('#reload').onclick = () => reloadAdmin(tab);
 }
 
@@ -739,6 +803,29 @@ function downloadExcel() {
   ]), '자기평가');
   const d = new Date();
   XLSX.writeFile(wb, `프로젝트I_평가결과_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.xlsx`);
+}
+
+/* 피드백 (교수자) */
+function adminFeedbackHTML() {
+  const A = S.admin;
+  const list = A.students.map(s => ({ ...s, fbs: A.peers.filter(p => p.target === s.name && String(p.feedback).trim()) }));
+  if (!S.fbSel || !list.some(x => x.name === S.fbSel)) S.fbSel = list[0].name;
+  const cur = list.find(x => x.name === S.fbSel);
+  return `<div class="split">
+    <ul class="plist" aria-label="학생 목록">${list.map(x => `<li><button data-fs="${esc(x.name)}" aria-current="${x.name === S.fbSel}">
+      <span>${esc(x.name)}${x.excluded ? ' · 제외' : ''}</span><span class="sc">${x.fbs.length}개</span></button></li>`).join('')}</ul>
+    <section class="form" style="margin-top:0">
+      <div class="form-top"><div><p class="muted small" style="margin:0">받은 상호평가 피드백</p><h2>${esc(cur.name)}</h2></div>
+        <div class="top-actions">${cur.excluded ? '<span class="pill lg off">평가 제외</span>' : ''}<span class="pill lg none">${cur.fbs.length}개</span>
+        <button class="btn sm" id="reload">새로고침</button></div></div>
+      ${cur.fbs.length ? `<ol class="fb-cards plain">${cur.fbs.map((f, i) => `<li><span class="fb-no">${i + 1}</span><div><p>${esc(String(f.feedback).replace(/^'/, ''))}</p>
+        <div class="fb-meta">${esc(f.evaluator)} · ${f.total} / 20점</div></div></li>`).join('')}</ol>`
+        : '<div class="empty" style="margin-top:20px">받은 피드백이 없습니다.</div>'}
+      <p class="muted small" style="margin-top:16px">학생 화면에서는 작성자 이름과 점수 없이 피드백 내용만 보입니다.</p>
+    </section></div>`;
+}
+function bindAdminFeedback() {
+  document.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { S.fbSel = b.dataset.fs; renderAdmin('feedback'); });
 }
 
 /* ===== 시작 ===== */
