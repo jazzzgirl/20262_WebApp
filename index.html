@@ -345,8 +345,8 @@ function renderHome() {
     <ol class="catalog">
       ${PROJECTS.map(p => `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
         <span class="no">${p.no}</span>
-        <span><strong>${p.name}</strong><span class="muted small">${p.open ? '평가가 종료되었습니다' : '다음 프로젝트에서 열립니다'}</span></span>
-        <span class="state">${p.open ? '평가 종료' : '준비 중'}</span></button></li>
+        <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가' : (p.feedback ? '평가가 종료되었습니다' : '다음 프로젝트에서 열립니다')}</span></span>
+        <span class="state">${p.open ? '입장하기' : (p.feedback ? '평가 종료' : '준비 중')}</span></button></li>
       ${p.feedback ? `<li class="sub-row"><button class="proj" data-fb="${p.id}">
         <span class="no fbno" aria-hidden="true">↳</span>
         <span><strong>상호평가 ${p.no} 피드백 확인</strong><span class="muted small">동료들이 내 앱에 남긴 피드백을 확인합니다</span></span>
