@@ -156,13 +156,14 @@ input[type=url]:focus,input[type=text]:focus,input[type=password]:focus{border-c
 .plist button[aria-current="true"]{background:var(--ink);color:#fff}
 .plist .sc{font-variant-numeric:tabular-nums;font-size:.875rem}
 
-.slider-row{display:grid;grid-template-columns:36px 1fr 36px 64px;gap:10px;align-items:center;margin-top:6px}
+.slider-row{display:grid;grid-template-columns:36px 1fr 36px 104px;gap:10px;align-items:center;margin-top:6px}
 .slider-row .step{height:36px;border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer;font-weight:700}
 .slider-row output{font-size:1.25rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .slider-row output small{font-size:.8125rem;color:var(--muted);font-weight:400}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,var(--civic) var(--pct,0%),var(--line) var(--pct,0%));cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--surface);border:3px solid var(--civic)}
 input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--surface);border:3px solid var(--civic)}
+
 .ticks{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin:2px 46px 0;font-variant-numeric:tabular-nums}
 
 .meter{display:flex;gap:3px;height:16px;margin:10px 0 4px}
@@ -210,6 +211,54 @@ summary{cursor:pointer;font-weight:500;color:var(--civic)}
 #toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:6px;z-index:70;font-weight:500;max-width:90vw}
 #toast[hidden]{display:none}
 
+
+/* 프로젝트 전환 (교수자) */
+.pswitch{display:inline-flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:8px;margin-top:24px}
+.pswitch button{height:34px;padding:0 16px;border:0;border-radius:6px;background:none;font-weight:500;color:var(--muted);cursor:pointer}
+.pswitch button:hover{color:var(--ink)}
+.pswitch button[aria-pressed="true"]{background:var(--civic);color:#fff}
+
+/* 설정 카드 + 스위치 */
+.setting{display:flex;justify-content:space-between;align-items:center;gap:20px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 22px;margin-top:24px}
+.setting h3{font-size:1.0625rem}
+.setting p{margin:4px 0 0;max-width:60em}
+.switch{display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 12px 0 4px;border:1px solid var(--line);border-radius:999px;background:var(--bg);cursor:pointer;font-weight:500;white-space:nowrap}
+.switch .knob{width:26px;height:26px;border-radius:50%;background:var(--surface);border:1px solid var(--line);transition:transform .15s}
+.switch[aria-checked="true"]{background:var(--civic);border-color:var(--civic);color:#fff;padding:0 4px 0 12px;flex-direction:row-reverse}
+.switch[aria-checked="true"] .knob{border-color:#fff}
+
+/* 서술형 영역 */
+.sec-title{font-size:1.0625rem;margin:22px 0 2px;padding-bottom:10px;border-bottom:2px solid var(--ink)}
+.text-sec{margin-top:26px;padding:20px 22px;background:var(--bg);border-radius:8px}
+.text-sec h3{font-size:1.0625rem}
+.text-sec > p{margin:4px 0 0}
+.text-sec textarea{background:var(--surface)}
+
+/* 피드백 두 영역 */
+.fb-parts{display:grid;gap:10px}
+.fb-part p{margin:4px 0 0}
+.fb-tag{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:.8125rem;font-weight:700}
+.fb-part.good .fb-tag{background:var(--civic-weak);color:var(--civic-deep)}
+.fb-part.better .fb-tag{background:var(--signal-weak);color:#7A5B00}
+
+/* 교수평가 상·중·하 */
+:root{--lv-hi:#0D6B6B;--lv-mid:#D08C00;--lv-lo:#B3261E}
+.lv-hi{--c:var(--lv-hi)} .lv-mid{--c:var(--lv-mid)} .lv-lo{--c:var(--lv-lo)}
+input[type=range].rng{background:linear-gradient(to right,var(--fill,var(--civic)) var(--pct,0%),var(--line) var(--pct,0%))}
+input[type=range].rng::-webkit-slider-thumb{border-color:var(--fill,var(--civic))}
+input[type=range].rng::-moz-range-thumb{border-color:var(--fill,var(--civic))}
+.slider-row{grid-template-columns:36px 1fr 36px 104px}
+.slider-row output{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.lv-tag{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;background:var(--c);color:#fff;font-size:.8125rem;font-weight:700}
+.meter span i.lv-hi,.meter span i.lv-mid,.meter span i.lv-lo{background:var(--c)}
+.lv-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:.8125rem;color:var(--muted)}
+.lv-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c)}
+.crit{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px}
+.crit li{display:grid;grid-template-columns:26px 72px 1fr;gap:10px;align-items:start;padding:7px 10px;border-radius:6px;font-size:.875rem;color:var(--muted);border:1px solid transparent}
+.crit li.cur{color:var(--ink);background:color-mix(in srgb,var(--c) 9%,white);border-color:color-mix(in srgb,var(--c) 35%,white)}
+.crit-lv{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:5px;font-size:.75rem;font-weight:700;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 45%,white)}
+.crit li.cur .crit-lv{background:var(--c);color:#fff;border-color:var(--c)}
+.crit-rg{font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:1px}
 @media (max-width:720px){
   .wrap{padding:20px 16px 80px}
   .hero{padding:36px 0 24px}
@@ -219,6 +268,9 @@ summary{cursor:pointer;font-weight:500;color:var(--civic)}
   .plist li{flex:0 0 auto}
   .plist button{border-bottom:0;border-right:1px solid var(--line);white-space:nowrap}
   .ref{grid-template-columns:1fr 1fr 1fr}
+  .crit li{grid-template-columns:26px 1fr}
+  .crit-rg{display:none}
+  .setting{flex-direction:column;align-items:flex-start}
   .seg{height:40px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -236,12 +288,18 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzNpdQVad6yPHc2tYF_9j6k
 
 const COURSE = '2026학년도 2학기 메타버스 콘텐츠 프로젝트';
 const TITLE = 'AI와 공공데이터를 활용한 웹 앱 개발';
+
+/* 프로젝트 목록
+   open     : true = 상호평가·자기평가 입장 가능 / false = 평가 종료(또는 준비 중)
+   feedback : true = '상호평가 피드백 확인' 메뉴 표시 (실제 공개 여부는 교수자 메뉴에서 설정) */
 const PROJECTS = [
   { id:'p1', no:'I',   name:'프로젝트 I',   open:false, feedback:true },
-  { id:'p2', no:'II',  name:'프로젝트 II',  open:false },
+  { id:'p2', no:'II',  name:'프로젝트 II',  open:true,  feedback:true },
   { id:'p3', no:'III', name:'프로젝트 III', open:false },
   { id:'p4', no:'IV',  name:'프로젝트 IV',  open:false }
 ];
+
+/* ===== 평가 항목 ===== */
 const PEER_ITEMS = [
   { label:'"나라면 실제로 써볼 것 같다"', max:8, desc:'실사용자 입장에서 이 앱을 실제로 써볼 의향이 얼마나 되나요?' },
   { label:'문제 해결의 참신성·유용성', max:4, desc:'아이디어가 실제로 유용하고 참신한가요?' },
@@ -249,25 +307,62 @@ const PEER_ITEMS = [
   { label:'발표 전달력', max:4, desc:'내용이 이해하기 쉽고 시연이 명확했나요?' }
 ];
 const SELF_ITEMS = [
-  { label:'실사용자 관점 자체 점검', max:5, desc:'목표한 사용자가 실제로 이 앱을 쓸 이유가 있는지 스스로 점검해 보세요.',
-    texts:[{ label:'목표 사용자는 누구이고, 왜 이 앱을 쓰게 될까요?', ph:'예) 버스로 통학하는 학생이 ○○ 정보를 매일 확인해야 해서…' }] },
-  { label:'목표 대비 달성도', max:3, desc:'기획 단계에서 계획한 핵심 기능을 실제로 얼마나 구현했나요?',
-    texts:[{ label:'계획한 핵심 기능 중 구현한 것과 구현하지 못한 것', ph:'구현한 기능 / 구현하지 못한 기능과 그 이유' }] },
-  { label:'과정 성찰', max:2, desc:'어려웠던 점, 배운 점, 다음 프로젝트에 적용할 점을 돌아보세요.',
-    texts:[{ label:'어려웠던 점', ph:'' }, { label:'배운 점', ph:'' }, { label:'다음 프로젝트에 적용할 점', ph:'' }] }
+  { label:'실사용자 관점 자체 점검', max:5, desc:'목표한 사용자가 실제로 이 앱을 쓸 이유가 있는지 스스로 점검해 보세요.' },
+  { label:'목표 대비 달성도', max:3, desc:'기획 단계에서 계획한 핵심 기능을 실제로 얼마나 구현했나요?' },
+  { label:'과정 성찰', max:2, desc:'프로젝트를 진행한 과정을 돌아보고 스스로 점검해 보세요.' }
 ];
+/* 교수평가: levels = [상, 중, 하] 평가 기준 */
 const PROF_ITEMS = [
-  { label:'실제 활용도 및 사용자 가치', max:20, desc:'실사용자가 의미 있게, 반복적으로 사용할 만한가 / 실생활에 실질적 도움이 되는가' },
-  { label:'공공 API·오픈데이터 연동 완성도', max:10, desc:'데이터가 정상 호출·반영되는지, 데이터 선정의 적절성' },
-  { label:'핵심 기능 구현 정도', max:10, desc:'기획한 핵심 기능이 실제로 정상 작동하는지' },
-  { label:'생성형 AI 활용의 적절성·완성도', max:10, desc:'AI가 사용자 활용도를 높이는 지점에 설계되었는지, 입력/출력 설계의 타당성' },
-  { label:'사용성(UI/UX)', max:10, desc:'실사용자가 불편 없이 이용할 수 있는 화면 구성인지' },
-  { label:'배포 완료 및 정상 작동', max:5, desc:'배포 URL 접속 가능 여부, 라이브 데모 성공 여부' },
-  { label:'발표 논리성 및 전달력', max:5, desc:'문제 정의~구현까지 논리적 흐름, 질의응답 대응' }
+  { label:'실제 활용도 및 사용자 가치', max:20, desc:'실사용자가 의미 있게, 반복적으로 사용할 만한가 / 실생활에 실질적 도움이 되는가',
+    levels:['목표 사용자가 분명하고 반복해서 쓸 이유가 있으며, 실생활 문제를 실질적으로 해결함',
+            '쓸모는 있으나 사용 상황이 제한적이거나 기존 서비스와의 차별점이 약함',
+            '목표 사용자나 사용 이유가 불분명해 실제로 쓰기 어려움'] },
+  { label:'공공 API·오픈데이터 연동 완성도', max:10, desc:'데이터가 정상 호출·반영되는지, 데이터 선정의 적절성',
+    levels:['데이터가 정상 호출·반영되고, 문제 해결에 맞는 데이터를 선정함',
+            '연동은 되나 일부 오류·지연이 있거나 데이터를 단순 나열하는 수준',
+            '호출 실패가 잦거나 데이터 선정이 주제와 맞지 않음'] },
+  { label:'핵심 기능 구현 정도', max:10, desc:'기획한 핵심 기능이 실제로 정상 작동하는지',
+    levels:['기획한 핵심 기능이 모두 정상 작동함',
+            '핵심 기능 일부가 미완성이거나 예외 상황에서 오류가 남',
+            '핵심 기능 대부분이 작동하지 않음'] },
+  { label:'생성형 AI 활용의 적절성·완성도', max:10, desc:'AI가 사용자 활용도를 높이는 지점에 설계되었는지, 입력/출력 설계의 타당성',
+    levels:['AI가 사용자 활용도를 높이는 지점에 배치되고 입력·출력 설계가 타당함',
+            'AI 기능은 작동하나 부가적이거나 출력 품질이 고르지 않음',
+            'AI 활용이 형식적이거나 작동하지 않음'] },
+  { label:'사용성(UI/UX)', max:10, desc:'실사용자가 불편 없이 이용할 수 있는 화면 구성인지',
+    levels:['처음 쓰는 사용자도 안내 없이 목적을 달성할 수 있음',
+            '사용은 가능하나 흐름·가독성·모바일 화면에 불편이 있음',
+            '화면 구성이 혼란스러워 사용하기 어려움'] },
+  { label:'배포 완료 및 정상 작동', max:5, desc:'배포 URL 접속 가능 여부, 라이브 데모 성공 여부',
+    levels:['배포 URL 접속과 라이브 데모가 모두 정상',
+            '접속은 되나 배포 환경에서 일부 기능에 오류가 있음',
+            '접속이 안 되거나 라이브 데모에 실패함'] },
+  { label:'발표 논리성 및 전달력', max:5, desc:'문제 정의~구현까지 논리적 흐름, 질의응답 대응',
+    levels:['문제 정의부터 구현까지 흐름이 논리적이고 질의응답에 명확히 대응함',
+            '흐름은 있으나 일부 설명이 부족하거나 질의응답이 미흡함',
+            '흐름이 불명확하고 질의응답 대응이 어려움'] }
 ];
+/* 프로젝트별 서술형 (점수에 반영되지 않음) */
+const TEXTS = {
+  p1: {
+    peer: [{ label:'피드백', ph:'실사용자로서 좋았던 점과, 실제로 쓰려면 보완했으면 하는 점을 구체적으로 적어 주세요.' }],
+    self: [{ label:'목표 사용자는 누구이고, 왜 이 앱을 쓰게 될까요?', ph:'' },
+           { label:'계획한 핵심 기능 중 구현한 것과 구현하지 못한 것', ph:'' },
+           { label:'어려웠던 점', ph:'' }, { label:'배운 점', ph:'' }, { label:'다음 프로젝트에 적용할 점', ph:'' }]
+  },
+  p2: {
+    peer: [{ label:'잘된 점', ph:'실사용자로서 좋았던 점, 잘 만든 기능이나 아이디어를 구체적으로 적어 주세요.' },
+           { label:'개선할 점', ph:'실제로 쓰려면 보완했으면 하는 점을 구체적으로 적어 주세요.' }],
+    self: [{ label:'계획한 핵심 기능 중 구현한 것과 구현하지 못한 것', ph:'구현한 기능 / 구현하지 못한 기능과 그 이유' },
+           { label:'어려웠던 점', ph:'' },
+           { label:'프로젝트를 진행하며 느낀 점', ph:'' },
+           { label:'다음 프로젝트에 적용할 점', ph:'' }]
+  }
+};
 const MIN_TEXT = 10;
 
-const S = { p:'p1', gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null, profSel:null, onlyTodo:false, fb:null, fbSel:null };
+const S = { p:null, gatePw:null, students:[], me:null, sid:null, data:null, adminPw:null, admin:null,
+            profSel:null, onlyTodo:false, fb:null, fbSel:null, pub:null, adminTab:'students' };
 let FORM = null;
 const store = (() => { try { const t = window.sessionStorage; t.setItem('_t','1'); t.removeItem('_t'); return t; } catch (e) { const m = {}; return { getItem:k => k in m ? m[k] : null, setItem:(k,v) => { m[k] = String(v); }, removeItem:k => { delete m[k]; }, clear:() => { for (const k in m) delete m[k]; } }; } })();
 
@@ -277,10 +372,14 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const sum = a => a.reduce((s,v) => s + (Number(v)||0), 0);
 const fmt = (v, d=1) => v === null || v === undefined ? '—' : (Math.round(v * 10**d) / 10**d).toString();
 const app = html => { $('#app').innerHTML = html; window.scrollTo(0,0); };
+const PROJ = (id = S.p) => PROJECTS.find(x => x.id === id);
+const T = (id = S.p) => TEXTS[id] || TEXTS.p2;
+const ADMIN_PROJECTS = PROJECTS.filter(p => TEXTS[p.id]);
+const ADMIN_DEFAULT = (PROJECTS.filter(p => p.open && TEXTS[p.id]).pop() || ADMIN_PROJECTS[ADMIN_PROJECTS.length - 1]).id;
 
-async function api(action, payload = {}) {
+async function api(action, payload = {}, opt = {}) {
   if (!API_URL || API_URL.indexOf('http') !== 0) throw new Error('index.html 의 API_URL 에 Apps Script 웹 앱 주소를 입력해야 합니다.');
-  $('#loading').hidden = false;
+  if (!opt.quiet) $('#loading').hidden = false;
   try {
     const r = await fetch(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...payload }) });
     const j = await r.json();
@@ -289,7 +388,7 @@ async function api(action, payload = {}) {
   } catch (e) {
     if (e instanceof TypeError) throw new Error('서버에 연결하지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.');
     throw e;
-  } finally { $('#loading').hidden = true; }
+  } finally { if (!opt.quiet) $('#loading').hidden = true; }
 }
 
 function toast(msg) {
@@ -331,10 +430,21 @@ function appBtn(url) {
 function band(right = '', wide = false) {
   return `<header class="band"><div class="wrap${wide ? ' wide' : ''}"><div><div class="course">${esc(COURSE)}</div><div class="title">${esc(TITLE)}</div></div><div class="who">${right}</div></div></header>`;
 }
+const ADMIN_BTN = '<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>';
+function bindCounter(ta) {
+  const c = ta.parentElement.querySelector('.count');
+  const upd = () => { const n = ta.value.trim().length; c.textContent = `${n}자${n < MIN_TEXT ? ` (최소 ${MIN_TEXT}자)` : ''}`; c.classList.toggle('short', n < MIN_TEXT); };
+  ta.addEventListener('input', upd); upd();
+}
+function textField(id, cls, label, ph, val) {
+  return `<div class="field"><label for="${id}">${esc(label)}<span class="req">필수</span></label>
+    <textarea id="${id}" class="${cls}" placeholder="${esc(ph || '')}">${esc(val || '')}</textarea><div class="count"></div></div>`;
+}
 
 /* ===== 홈 ===== */
 function renderHome() {
-  app(`${band('<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>')}
+  const fbState = p => S.pub && S.pub[p.id] ? S.pub[p.id].feedbackOpen : null; // null = 확인 중
+  app(`${band(ADMIN_BTN)}
   <main class="wrap">
     <section class="hero">
       <h1>공공데이터로 만든 앱, 실제로 쓸 만한가요?</h1>
@@ -343,32 +453,47 @@ function renderHome() {
       <div class="legend"><span><i style="background:var(--civic-deep)"></i>교수평가 70</span><span><i style="background:var(--peer)"></i>상호평가 20</span><span><i style="background:var(--signal)"></i>자체평가 10</span></div>
     </section>
     <ol class="catalog">
-      ${PROJECTS.map(p => `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
-        <span class="no">${p.no}</span>
-        <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가' : (p.feedback ? '평가가 종료되었습니다' : '다음 프로젝트에서 열립니다')}</span></span>
-        <span class="state">${p.open ? '입장하기' : (p.feedback ? '평가 종료' : '준비 중')}</span></button></li>
-      ${p.feedback ? `<li class="sub-row"><button class="proj" data-fb="${p.id}">
-        <span class="no fbno" aria-hidden="true">↳</span>
-        <span><strong>상호평가 ${p.no} 피드백 확인</strong><span class="muted small">동료들이 내 앱에 남긴 피드백을 확인합니다</span></span>
-        <span class="state">확인하기</span></button></li>` : ''}`).join('')}
+      ${PROJECTS.map(p => {
+        const ended = !p.open && p.feedback;
+        let row = `<li><button class="proj" ${p.open ? `data-proj="${p.id}"` : 'disabled'}>
+          <span class="no">${p.no}</span>
+          <span><strong>${p.name}</strong><span class="muted small">${p.open ? '상호평가 · 자기평가' : (ended ? '평가가 종료되었습니다' : '다음 프로젝트에서 열립니다')}</span></span>
+          <span class="state">${p.open ? '입장하기' : (ended ? '평가 종료' : '준비 중')}</span></button></li>`;
+        if (p.feedback) {
+          const st = fbState(p), closed = st === false;
+          row += `<li class="sub-row"><button class="proj" ${closed ? 'disabled' : `data-fb="${p.id}"`}>
+            <span class="no fbno" aria-hidden="true">↳</span>
+            <span><strong>상호평가 ${p.no} 피드백 확인</strong><span class="muted small">${closed ? '교수자가 공개하면 확인할 수 있습니다' : '동료들이 내 앱에 남긴 피드백을 확인합니다'}</span></span>
+            <span class="state">${closed ? '공개 전' : '확인하기'}</span></button></li>`;
+        }
+        return row;
+      }).join('')}
     </ol>
   </main>`);
   document.querySelectorAll('[data-proj]').forEach(b => b.onclick = () => openGate(b.dataset.proj));
   document.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => openFeedback(b.dataset.fb));
   $('#adminBtn').onclick = openAdminLogin;
+  if (!S.pub) loadPublicStatus();
+}
+async function loadPublicStatus() {
+  try {
+    const r = await api('publicStatus', {}, { quiet:true });
+    S.pub = r.projects;
+    if (document.querySelector('.catalog')) renderHome();
+  } catch (e) { /* 상태를 못 불러오면 서버가 다시 확인함 */ }
 }
 
 /* ===== 상호평가 피드백 확인 (학생) ===== */
 async function openFeedback(p) {
   try {
     const r = await api('feedbackNames', { p });
-    S.fb = { p, names: r.students, me: null, list: [] };
+    S.fb = { p, names: r.students, me: null, labels: [], items: [] };
     renderFbNames();
   } catch (err) { toast(err.message); }
 }
-function fbLabel() { const p = PROJECTS.find(x => x.id === S.fb.p); return `상호평가 ${p.no} 피드백 확인`; }
+function fbLabel() { return `상호평가 ${PROJ(S.fb.p).no} 피드백 확인`; }
 function renderFbNames() {
-  app(`${band('<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>')}
+  app(`${band(ADMIN_BTN)}
   <main class="wrap">
     <div class="head"><div><p class="muted small" style="margin:0">${esc(fbLabel())}</p><h2>본인 이름을 선택하세요</h2>
       <p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
@@ -384,48 +509,53 @@ function openFbLogin(name) {
     title: `${name} 학생`, desc: '학번을 입력하세요.', inputmode: 'numeric', placeholder: '학번 9자리', submit: '피드백 보기',
     onSubmit: async sid => {
       const r = await api('feedbackLogin', { p:S.fb.p, name, sid });
-      S.fb.me = name; S.fb.list = r.feedback;
+      S.fb.me = name; S.fb.labels = r.labels || []; S.fb.items = r.items || [];
       setTimeout(renderFbView);
     }
   });
 }
+function fbBody(labels, texts) {
+  if (labels.length < 2) return `<p>${esc(texts[0])}</p>`;
+  return `<div class="fb-parts">${labels.map((l, i) => texts[i] ? `<div class="fb-part ${i === 0 ? 'good' : 'better'}"><span class="fb-tag">${esc(l)}</span><p>${esc(texts[i])}</p></div>` : '').join('')}</div>`;
+}
 function renderFbView() {
-  const L = S.fb.list;
+  const L = S.fb.items;
   app(`${band(`<span>${esc(S.fb.me)}</span><button class="btn sm on-dark" id="fbOut">나가기</button>`)}
   <main class="wrap">
     <div class="head"><div><p class="muted small" style="margin:0">${esc(fbLabel())}</p><h2>내 앱에 대한 동료 피드백</h2>
       <p class="muted" style="margin:4px 0 0">${L.length ? `피드백 ${L.length}개가 있습니다. 작성자는 표시되지 않습니다.` : ''}</p></div></div>
-    ${L.length ? `<ol class="fb-cards">${L.map((t, i) => `<li><span class="fb-no">${i + 1}</span><p>${esc(t)}</p></li>`).join('')}</ol>`
+    ${L.length ? `<ol class="fb-cards">${L.map((t, i) => `<li><span class="fb-no">${i + 1}</span>${fbBody(S.fb.labels, t)}</li>`).join('')}</ol>`
       : '<div class="empty">아직 받은 피드백이 없습니다.</div>'}
     <div class="back"><button class="btn" id="fbBack">이름 선택으로</button></div>
   </main>`);
-  const out = () => { S.fb.me = null; S.fb.list = []; renderFbNames(); };
+  const out = () => { S.fb.me = null; S.fb.items = []; renderFbNames(); };
   $('#fbOut').onclick = out; $('#fbBack').onclick = out;
 }
 
+/* ===== 프로젝트 입장 ===== */
 function openGate(p) {
-  if (S.gatePw && S.students.length) return renderNames();
+  if (S.p === p && S.gatePw && S.students.length) return renderNames();
   openModal({
-    title: '프로젝트 I 입장', desc: '수업 시간에 안내한 비밀번호를 입력하세요.', submit: '입장',
+    title: `${PROJ(p).name} 입장`, desc: '수업 시간에 안내한 비밀번호를 입력하세요.', submit: '입장',
     onSubmit: async pw => {
       const r = await api('gate', { p, pw });
-      S.gatePw = pw; S.students = r.students; store.setItem('gatePw', pw);
+      S.p = p; S.gatePw = pw; S.students = r.students;
+      store.setItem('p', p); store.setItem('gatePw', pw);
       setTimeout(renderNames);
     }
   });
 }
 
-/* ===== 이름 선택 ===== */
 function renderNames() {
-  app(`${band('<button class="btn sm on-dark" id="adminBtn">교수자 메뉴</button>')}
+  app(`${band(ADMIN_BTN)}
   <main class="wrap">
-    <div class="head"><div><h2>본인 이름을 선택하세요</h2><p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
+    <div class="head"><div><p class="muted small" style="margin:0">${esc(PROJ().name)}</p><h2>본인 이름을 선택하세요</h2><p class="muted" style="margin:4px 0 0">이름을 누르면 학번을 비밀번호로 입력합니다.</p></div></div>
     <div class="names">${S.students.map(n => `<button class="name-btn" data-n="${esc(n)}">${esc(n)}</button>`).join('')}</div>
     <div class="back"><button class="btn" id="home">처음으로</button></div>
   </main>`);
   document.querySelectorAll('.name-btn').forEach(b => b.onclick = () => openStudentLogin(b.dataset.n));
   $('#adminBtn').onclick = openAdminLogin;
-  $('#home').onclick = () => { S.gatePw = null; S.students = []; store.removeItem('gatePw'); renderHome(); };
+  $('#home').onclick = () => { S.gatePw = null; S.students = []; store.removeItem('gatePw'); store.removeItem('p'); renderHome(); };
 }
 
 function openStudentLogin(name) {
@@ -441,21 +571,24 @@ function openStudentLogin(name) {
 }
 
 function logoutStudent() {
-  S.me = S.sid = S.data = null;
+  S.me = S.sid = S.data = null; FORM = null;
   store.removeItem('me'); store.removeItem('sid');
   renderNames();
 }
 
 /* ===== 학생 화면 ===== */
+function studentBand() { return band(`<span>${esc(S.me)}</span><button class="btn sm on-dark" id="logout">나가기</button>`); }
 function renderStudent(tab) {
   const d = S.data;
   const active = d.targets.filter(t => !t.excluded);
   const done = active.filter(t => d.peers[t.name]).length;
-  const tabs = `<div class="tabs" role="tablist">
+  const tabs = `<p class="muted small" style="margin:24px 0 0">${esc(PROJ().name)}</p>
+    <div class="tabs" role="tablist" style="margin-top:8px">
     <button class="tab" role="tab" aria-selected="${tab==='peer'}" data-tab="peer">상호평가<span class="cnt">${done}/${active.length}</span></button>
     <button class="tab" role="tab" aria-selected="${tab==='self'}" data-tab="self">자기평가<span class="cnt">${d.self ? '완료' : '미완료'}</span></button></div>`;
   let body = '';
   if (tab === 'peer') {
+    FORM = null;
     const pct = active.length ? Math.round(done / active.length * 100) : 0;
     body = `<div class="progress"><div class="track"><div class="fill" style="width:${pct}%"></div></div><b>${done} / ${active.length}명 완료</b></div>
       <p class="muted small" style="margin:0 0 14px">본인을 제외한 학생을 평가합니다. 제출한 평가는 다시 열어 수정할 수 있습니다.</p>
@@ -467,15 +600,14 @@ function renderStudent(tab) {
   } else {
     body = selfFormHTML();
   }
-  app(`${band(`<span>${esc(S.me)}</span><button class="btn sm on-dark" id="logout">나가기</button>`)}
-  <main class="wrap">${tabs}${body}</main>`);
+  app(`${studentBand()}<main class="wrap">${tabs}${body}</main>`);
   $('#logout').onclick = logoutStudent;
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => renderStudent(b.dataset.tab));
   document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => renderPeerForm(b.dataset.t));
   if (tab === 'self') bindSelfForm();
 }
 
-/* 점수 막대 */
+/* 점수 버튼 */
 function scoreBar(idx, max, val, label) {
   let h = `<div class="bar" role="radiogroup" aria-label="${esc(label)}" data-idx="${idx}">`;
   for (let i = 1; i <= max; i++) {
@@ -497,86 +629,85 @@ document.addEventListener('click', e => {
   const bar = s.parentElement, v = +s.dataset.v;
   FORM.vals[+bar.dataset.idx] = v;
   paintBar(bar, v);
-  updateFormTotal();
+  const el = $('#ftotal'); if (el) el.textContent = sum(FORM.vals);
 });
-function updateFormTotal() {
-  const el = $('#ftotal'); if (!el) return;
-  el.textContent = sum(FORM.vals);
-}
-function bindCounter(ta) {
-  const c = ta.parentElement.querySelector('.count');
-  const upd = () => { const n = ta.value.trim().length; c.textContent = `${n}자${n < MIN_TEXT ? ` (최소 ${MIN_TEXT}자)` : ''}`; c.classList.toggle('short', n < MIN_TEXT); };
-  ta.addEventListener('input', upd); upd();
-}
 
 /* 상호평가 양식 */
 function renderPeerForm(name) {
   const d = S.data, t = d.targets.find(x => x.name === name), prev = d.peers[name];
+  const TX = T().peer;
   FORM = { kind:'peer', target:name, vals: prev ? prev.scores.slice() : PEER_ITEMS.map(() => null) };
-  app(`${band(`<span>${esc(S.me)}</span><button class="btn sm on-dark" id="logout">나가기</button>`)}
+  app(`${studentBand()}
   <main class="wrap">
     <div class="back" style="margin-top:8px"><button class="btn" id="toList">평가 목록으로</button></div>
     <form class="form" id="pform" novalidate>
       <div class="form-top">
-        <div><p class="muted small" style="margin:0">상호평가 · 20점</p><h2>${esc(name)}</h2></div>
+        <div><p class="muted small" style="margin:0">${esc(PROJ().name)} 상호평가 · 20점</p><h2>${esc(name)}</h2></div>
         <div class="top-actions">${appBtn(t.url)}</div>
       </div>
       ${PEER_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
         <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}</fieldset>`).join('')}
-      <div class="field"><label for="fb">피드백<span class="req">필수</span></label>
-        <textarea id="fb" placeholder="실사용자로서 좋았던 점과, 실제로 쓰려면 보완했으면 하는 점을 구체적으로 적어 주세요.">${esc(prev ? prev.feedback : '')}</textarea>
-        <div class="count"></div></div>
+      <div class="submit-row" style="margin-top:18px"><div class="total">합계 <b id="ftotal">${sum(FORM.vals)}</b> / 20점</div></div>
+      <section class="text-sec">
+        <h3>피드백</h3>
+        <p class="muted small">점수에는 반영되지 않습니다. 작성한 내용은 작성자 이름 없이 평가받는 학생에게 공개될 수 있습니다.</p>
+        ${TX.map((x, i) => textField('pt' + i, 'ptext', x.label, x.ph, prev ? prev.texts[i] : '')).join('')}
+      </section>
       <p class="err" id="ferr" role="alert"></p>
-      <div class="submit-row"><div class="total">합계 <b id="ftotal">0</b> / 20점</div>
+      <div class="submit-row"><span></span>
         <button class="btn primary" type="submit">${prev ? '평가 수정하기' : '평가 제출하기'}</button></div>
     </form>
   </main>`);
   $('#logout').onclick = logoutStudent;
   $('#toList').onclick = () => { FORM = null; renderStudent('peer'); };
-  bindCounter($('#fb'));
-  updateFormTotal();
+  document.querySelectorAll('.ptext').forEach(bindCounter);
   $('#pform').onsubmit = async e => {
     e.preventDefault();
+    const texts = [...document.querySelectorAll('.ptext')].map(x => x.value.trim());
     const errs = [];
     if (FORM.vals.some(v => v === null)) errs.push('모든 항목의 점수를 선택해 주세요.');
-    const fb = $('#fb').value.trim();
-    if (fb.length < MIN_TEXT) errs.push(`피드백을 ${MIN_TEXT}자 이상 작성해 주세요.`);
+    texts.forEach((x, i) => { if (x.length < MIN_TEXT) errs.push(`${TX[i].label}을(를) ${MIN_TEXT}자 이상 작성해 주세요.`); });
     if (errs.length) { $('#ferr').textContent = errs.join('\n'); return; }
     try {
-      const r = await api('submitPeer', { p:S.p, gatePw:S.gatePw, name:S.me, sid:S.sid, target:name, scores:FORM.vals, feedback:fb });
+      const r = await api('submitPeer', { p:S.p, gatePw:S.gatePw, name:S.me, sid:S.sid, target:name, scores:FORM.vals, texts });
       S.data = r.data; FORM = null;
       renderStudent('peer'); toast(`${name} 학생 평가를 저장했습니다.`);
     } catch (err) { $('#ferr').textContent = err.message; }
   };
 }
 
-/* 자기평가 양식 */
+/* 자기평가 양식: 점수 항목과 서술형을 분리 */
 function selfFormHTML() {
-  const prev = S.data.self;
+  const prev = S.data.self, TX = T().self;
   FORM = { kind:'self', vals: prev ? prev.scores.slice() : SELF_ITEMS.map(() => null) };
-  let ti = 0;
   return `<form class="form" id="sform" novalidate>
     <div class="form-top"><div><p class="muted small" style="margin:0">자기평가 · 10점</p><h2>내 앱 점검하기</h2></div>
       ${prev ? '<div class="top-actions"><span class="pill lg done">제출 완료 · 수정 가능</span></div>' : ''}</div>
-    ${SELF_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
-      <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}
-      ${it.texts.map(tx => { const i = ti++; return `<div class="field"><label for="st${i}">${esc(tx.label)}<span class="req">필수</span></label>
-        <textarea id="st${i}" class="stext" placeholder="${esc(tx.ph)}">${esc(prev ? prev.texts[i] : '')}</textarea><div class="count"></div></div>`; }).join('')}
-      </fieldset>`).join('')}
+    <section>
+      <h3 class="sec-title">점수 항목</h3>
+      ${SELF_ITEMS.map((it, k) => `<fieldset class="item"><legend><span>${esc(it.label)}</span><span class="mx">${it.max}점</span></legend>
+        <p class="desc">${esc(it.desc)}</p>${scoreBar(k, it.max, FORM.vals[k], it.label)}</fieldset>`).join('')}
+      <div class="submit-row" style="margin-top:18px"><div class="total">합계 <b id="ftotal">${sum(FORM.vals)}</b> / 10점</div></div>
+    </section>
+    <section class="text-sec">
+      <h3>서술형</h3>
+      <p class="muted small">점수에는 반영되지 않습니다. 모두 작성해야 제출할 수 있습니다.</p>
+      ${TX.map((x, i) => textField('st' + i, 'stext', x.label, x.ph, prev ? prev.texts[i] : '')).join('')}
+    </section>
     <p class="err" id="ferr" role="alert"></p>
-    <div class="submit-row"><div class="total">합계 <b id="ftotal">0</b> / 10점</div>
+    <div class="submit-row"><span></span>
       <button class="btn primary" type="submit">${prev ? '자기평가 수정하기' : '자기평가 제출하기'}</button></div>
   </form>`;
 }
 function bindSelfForm() {
+  const TX = T().self;
   document.querySelectorAll('.stext').forEach(bindCounter);
-  updateFormTotal();
   $('#sform').onsubmit = async e => {
     e.preventDefault();
     const texts = [...document.querySelectorAll('.stext')].map(t => t.value.trim());
     const errs = [];
-    if (FORM.vals.some(v => v === null)) errs.push('모든 항목의 점수를 선택해 주세요.');
-    if (texts.some(t => t.length < MIN_TEXT)) errs.push(`서술 항목을 모두 ${MIN_TEXT}자 이상 작성해 주세요.`);
+    if (FORM.vals.some(v => v === null)) errs.push('모든 점수 항목을 선택해 주세요.');
+    texts.forEach((x, i) => { if (x.length < MIN_TEXT) errs.push(`'${TX[i].label}'을(를) ${MIN_TEXT}자 이상 작성해 주세요.`); });
     if (errs.length) { $('#ferr').textContent = errs.join('\n'); return; }
     try {
       const r = await api('submitSelf', { p:S.p, gatePw:S.gatePw, name:S.me, sid:S.sid, scores:FORM.vals, texts });
@@ -590,15 +721,30 @@ function openAdminLogin() {
   openModal({
     title: '교수자 메뉴', desc: '교수자 비밀번호를 입력하세요.', submit: '들어가기',
     onSubmit: async pw => {
-      const r = await api('adminLogin', { p:S.p, adminPw:pw });
-      S.adminPw = pw; S.admin = r.data; store.setItem('adminPw', pw);
+      const p = ADMIN_DEFAULT;
+      const r = await api('adminLogin', { p, adminPw:pw });
+      S.p = p; S.adminPw = pw; S.admin = r.data;
+      store.setItem('adminPw', pw); store.setItem('adminP', p);
       setTimeout(() => renderAdmin('students'));
     }
   });
 }
 function logoutAdmin() {
-  S.adminPw = S.admin = null; S.profSel = null; FORM = null;
-  store.removeItem('adminPw'); renderHome();
+  S.adminPw = S.admin = null; S.profSel = null; FORM = null; S.pub = null;
+  store.removeItem('adminPw'); store.removeItem('adminP'); renderHome();
+}
+async function switchAdminProject(p) {
+  if (p === S.p) return;
+  try {
+    const r = await api('adminLogin', { p, adminPw:S.adminPw });
+    S.p = p; S.admin = r.data; S.profSel = null; S.fbSel = null;
+    store.setItem('adminP', p);
+    renderAdmin(S.adminTab);
+  } catch (err) { toast(err.message); }
+}
+async function reloadAdmin(tab) {
+  try { const r = await api('adminLogin', { p:S.p, adminPw:S.adminPw }); S.admin = r.data; renderAdmin(tab); toast('최신 평가 상황을 불러왔습니다.'); }
+  catch (err) { toast(err.message); }
 }
 
 function results() {
@@ -619,7 +765,7 @@ function results() {
 }
 
 function renderAdmin(tab) {
-  FORM = null;
+  FORM = null; S.adminTab = tab;
   const tabs = [['students','학생 설정'],['prof','교수 평가'],['status','평가 현황'],['result','결과'],['feedback','피드백']];
   let body = '';
   if (tab === 'students') body = adminStudentsHTML();
@@ -627,12 +773,14 @@ function renderAdmin(tab) {
   if (tab === 'status') body = adminStatusHTML();
   if (tab === 'result') body = adminResultHTML();
   if (tab === 'feedback') body = adminFeedbackHTML();
-  app(`${band(`<span>교수자 · 프로젝트 I</span><button class="btn sm on-dark" id="logout">나가기</button>`, true)}
+  app(`${band(`<span>교수자</span><button class="btn sm on-dark" id="logout">나가기</button>`, true)}
   <main class="wrap wide">
+    <div class="pswitch" role="group" aria-label="프로젝트 선택">${ADMIN_PROJECTS.map(p => `<button type="button" data-ap="${p.id}" aria-pressed="${p.id === S.p}">${p.name}</button>`).join('')}</div>
     <div class="tabs" role="tablist">${tabs.map(([k,l]) => `<button class="tab" role="tab" aria-selected="${tab===k}" data-atab="${k}">${l}</button>`).join('')}</div>
     ${body}
   </main>`);
   $('#logout').onclick = logoutAdmin;
+  document.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => switchAdminProject(b.dataset.ap));
   document.querySelectorAll('[data-atab]').forEach(b => b.onclick = () => renderAdmin(b.dataset.atab));
   if (tab === 'students') bindAdminStudents();
   if (tab === 'prof') bindAdminProf();
@@ -642,9 +790,30 @@ function renderAdmin(tab) {
   if ($('#reload')) $('#reload').onclick = () => reloadAdmin(tab);
 }
 
-/* 학생 설정 */
+/* 학생 설정 + 피드백 공개 */
+function fbSwitchHTML() {
+  const on = S.admin.feedbackOpen;
+  return `<div class="setting">
+    <div><h3>학생 피드백 공개</h3>
+      <p class="muted small">공개하면 학생이 홈의 '상호평가 ${PROJ().no} 피드백 확인'에서 동료가 쓴 ${T().peer.map(x => x.label).join('·')}만 볼 수 있습니다. 점수, 작성자, 교수평가는 공개되지 않습니다.</p></div>
+    <button type="button" class="switch" id="fbSwitch" role="switch" aria-checked="${on}"><span class="knob"></span><span class="sw-label">${on ? '공개 중' : '비공개'}</span></button>
+  </div>`;
+}
+function bindFbSwitch() {
+  const b = $('#fbSwitch'); if (!b) return;
+  b.onclick = async () => {
+    const open = !S.admin.feedbackOpen;
+    try {
+      const r = await api('adminSetFeedbackOpen', { p:S.p, adminPw:S.adminPw, open });
+      S.admin = r.data; S.pub = null;
+      renderAdmin(S.adminTab);
+      toast(open ? `${PROJ().name} 피드백을 학생에게 공개했습니다.` : `${PROJ().name} 피드백을 비공개로 바꿨습니다.`);
+    } catch (err) { toast(err.message); }
+  };
+}
 function adminStudentsHTML() {
-  return `<div class="head"><div><h2>배포 주소와 평가 제외</h2>
+  return `${fbSwitchHTML()}
+    <div class="head"><div><h2>배포 주소와 평가 제외</h2>
     <p class="muted" style="margin:4px 0 0">평가 제외로 표시한 학생은 다른 학생들이 상호평가 점수를 입력할 수 없습니다.</p></div></div>
     <div class="tbl-wrap"><table><thead><tr><th>이름</th><th>학번</th><th style="min-width:280px">웹 앱 배포 주소</th><th>평가 제외</th></tr></thead><tbody>
     ${S.admin.students.map(s => `<tr class="${s.excluded ? 'excl' : ''}"><td><b>${esc(s.name)}</b></td><td class="num">${esc(s.sid)}</td>
@@ -654,6 +823,7 @@ function adminStudentsHTML() {
     <div class="sticky-save"><span class="muted small" id="dirty"></span><button class="btn primary" id="saveStu">변경 사항 저장</button></div>`;
 }
 function bindAdminStudents() {
+  bindFbSwitch();
   const mark = () => { $('#dirty').textContent = '저장하지 않은 변경 사항이 있습니다'; };
   document.querySelectorAll('.in-url').forEach(i => i.addEventListener('input', mark));
   document.querySelectorAll('.in-ex').forEach(i => i.addEventListener('change', () => { i.closest('tr').classList.toggle('excl', i.checked); mark(); }));
@@ -670,33 +840,45 @@ function bindAdminStudents() {
   };
 }
 
-/* 교수 평가 */
+/* 교수 평가: 슬라이더 + 상·중·하 색상 + 평가 기준 */
+const LV = [{ k:'hi', n:'상' }, { k:'mid', n:'중' }, { k:'lo', n:'하' }];
+function cut(max) { return { hi: Math.ceil(max * 0.8), mid: Math.ceil(max * 0.5) }; }
+function level(v, max) { const c = cut(max); return v >= c.hi ? 0 : v >= c.mid ? 1 : 2; }
+function ranges(max) {
+  const c = cut(max);
+  return [`${c.hi}–${max}점`, c.mid === c.hi - 1 ? `${c.mid}점` : `${c.mid}–${c.hi - 1}점`, `0–${c.mid - 1}점`];
+}
 function adminProfHTML() {
   const R = results();
-  if (!S.profSel) S.profSel = R[0].name;
+  if (!S.profSel || !R.some(x => x.name === S.profSel)) S.profSel = R[0].name;
   const s = R.find(x => x.name === S.profSel);
   const vals = s.profRec ? s.profRec.scores.slice() : PROF_ITEMS.map(() => 0);
   FORM = { kind:'prof', target:s.name, vals };
+  const labels = T().peer.map(x => x.label);
   return `<div class="split">
     <ul class="plist" aria-label="학생 목록">${R.map(x => `<li><button data-ps="${esc(x.name)}" aria-current="${x.name === S.profSel}">
       <span>${esc(x.name)}${x.excluded ? ' · 제외' : ''}</span><span class="sc">${x.prof === null ? '미입력' : x.prof + '점'}</span></button></li>`).join('')}</ul>
     <form class="form" id="profForm" style="margin-top:0" novalidate>
-      <div class="form-top"><div><p class="muted small" style="margin:0">교수평가 · 70점</p><h2>${esc(s.name)}</h2></div>
+      <div class="form-top"><div><p class="muted small" style="margin:0">${esc(PROJ().name)} 교수평가 · 70점</p><h2>${esc(s.name)}</h2></div>
         <div class="top-actions">
         ${s.excluded ? '<span class="pill lg off">평가 제외(상호평가)</span>' : ''}
         ${s.prof === null ? '<span class="pill lg todo">미저장</span>' : '<span class="pill lg done">저장됨</span>'}
         ${appBtn(s.url)}</div></div>
       <div class="ref"><div>상호평가 평균<b>${fmt(s.peerAvg, 2)}</b>${s.recv.length}명 평가</div><div>자기평가<b>${s.self ?? '—'}</b>/ 10</div><div>현재 교수평가<b id="ptot2">${sum(vals)}</b>/ 70</div></div>
-      <div class="meter" id="meter" aria-hidden="true">${PROF_ITEMS.map((it,k) => `<span style="flex:${it.max}"><i style="width:${vals[k]/it.max*100}%"></i></span>`).join('')}</div>
-      ${PROF_ITEMS.map((it, k) => `<div class="item"><div style="display:flex;justify-content:space-between;gap:12px;font-weight:700"><label for="rg${k}">${esc(it.label)}</label><span class="muted" style="font-weight:500">${it.max}점</span></div>
+      <div class="lv-legend"><span><i class="lv-hi"></i>상 (80% 이상)</span><span><i class="lv-mid"></i>중 (50% 이상)</span><span><i class="lv-lo"></i>하 (50% 미만)</span></div>
+      <div class="meter" id="meter" aria-hidden="true">${PROF_ITEMS.map((it,k) => `<span style="flex:${it.max}"><i class="lv-${LV[level(vals[k], it.max)].k}" style="width:${vals[k]/it.max*100}%"></i></span>`).join('')}</div>
+      ${PROF_ITEMS.map((it, k) => {
+        const lv = level(vals[k], it.max), rg = ranges(it.max);
+        return `<div class="item pitem" data-k="${k}"><div style="display:flex;justify-content:space-between;gap:12px;font-weight:700"><label for="rg${k}">${esc(it.label)}</label><span class="muted" style="font-weight:500">${it.max}점</span></div>
         <p class="desc">${esc(it.desc)}</p>
         <div class="slider-row"><button type="button" class="step" data-k="${k}" data-d="-1" aria-label="1점 내리기">−</button>
-          <input type="range" id="rg${k}" class="rng" data-k="${k}" min="0" max="${it.max}" step="1" value="${vals[k]}" style="--pct:${vals[k]/it.max*100}%">
+          <input type="range" id="rg${k}" class="rng" data-k="${k}" min="0" max="${it.max}" step="1" value="${vals[k]}" style="--pct:${vals[k]/it.max*100}%;--fill:var(--lv-${LV[lv].k})">
           <button type="button" class="step" data-k="${k}" data-d="1" aria-label="1점 올리기">+</button>
-          <output id="ov${k}">${vals[k]}<small> / ${it.max}</small></output></div>
-        <div class="ticks"><span>0</span><span>${it.max}</span></div></div>`).join('')}
-      <div class="field"><label for="memo">메모 (선택)</label><textarea id="memo" style="min-height:80px" placeholder="채점 근거나 학생에게 줄 코멘트">${esc(s.profRec ? s.profRec.memo : '')}</textarea></div>
-      ${s.recv.length ? `<details><summary>받은 동료 피드백 ${s.recv.length}개 보기</summary><ul class="fb">${s.recv.map(r => `<li>${esc(r.feedback)}<div class="who">${esc(r.evaluator)} · ${r.total}/20</div></li>`).join('')}</ul></details>` : ''}
+          <output id="ov${k}"><span class="lv-tag lv-${LV[lv].k}">${LV[lv].n}</span>${vals[k]}<small> / ${it.max}</small></output></div>
+        <ul class="crit" id="cr${k}">${LV.map((L, i) => `<li class="${i === lv ? 'cur lv-' + L.k : ''}"><span class="crit-lv lv-${L.k}">${L.n}</span><span class="crit-rg">${rg[i]}</span><span>${esc(it.levels[i])}</span></li>`).join('')}</ul></div>`;
+      }).join('')}
+      <div class="field"><label for="memo">메모 (선택, 학생에게 공개되지 않음)</label><textarea id="memo" style="min-height:80px" placeholder="채점 근거 메모">${esc(s.profRec ? s.profRec.memo : '')}</textarea></div>
+      ${s.recv.length ? `<details><summary>받은 동료 피드백 ${s.recv.length}개 보기</summary><ul class="fb">${s.recv.map(r => `<li>${labels.map((l, i) => `<div><b class="small">${esc(l)}</b> ${esc(r.texts[i] || '')}</div>`).join('')}<div class="who">${esc(r.evaluator)} · ${r.total}/20</div></li>`).join('')}</ul></details>` : ''}
       <p class="err" id="ferr" role="alert"></p>
       <div class="submit-row"><div class="total">합계 <b id="ptot">${sum(vals)}</b> / 70점</div>
         <button class="btn primary" type="submit">교수평가 저장</button></div>
@@ -705,11 +887,14 @@ function adminProfHTML() {
 function bindAdminProf() {
   document.querySelectorAll('[data-ps]').forEach(b => b.onclick = () => { S.profSel = b.dataset.ps; renderAdmin('prof'); });
   const setV = (k, v) => {
-    const max = PROF_ITEMS[k].max; v = Math.max(0, Math.min(max, v));
+    const it = PROF_ITEMS[k], max = it.max; v = Math.max(0, Math.min(max, v));
     FORM.vals[k] = v;
-    const rg = $('#rg' + k); rg.value = v; rg.style.setProperty('--pct', (v / max * 100) + '%');
-    $('#ov' + k).innerHTML = `${v}<small> / ${max}</small>`;
-    document.querySelectorAll('#meter i')[k].style.width = (v / max * 100) + '%';
+    const lv = level(v, max), L = LV[lv];
+    const rg = $('#rg' + k); rg.value = v;
+    rg.style.setProperty('--pct', (v / max * 100) + '%'); rg.style.setProperty('--fill', `var(--lv-${L.k})`);
+    $('#ov' + k).innerHTML = `<span class="lv-tag lv-${L.k}">${L.n}</span>${v}<small> / ${max}</small>`;
+    $('#cr' + k).querySelectorAll('li').forEach((li, i) => { li.className = i === lv ? `cur lv-${LV[i].k}` : ''; });
+    const mi = document.querySelectorAll('#meter i')[k]; mi.style.width = (v / max * 100) + '%'; mi.className = `lv-${L.k}`;
     $('#ptot').textContent = sum(FORM.vals); $('#ptot2').textContent = sum(FORM.vals);
   };
   document.querySelectorAll('.rng').forEach(r => r.addEventListener('input', () => setV(+r.dataset.k, +r.value)));
@@ -720,10 +905,8 @@ function bindAdminProf() {
     try {
       const r = await api('adminSaveProf', { p:S.p, adminPw:S.adminPw, target:name, scores:FORM.vals, memo:$('#memo').value.trim() });
       S.admin = r.data;
-      const R = results(), next = R.find(x => x.prof === null);
       toast(`${name} 학생 교수평가 ${sum(r.data.profs.find(x => x.name === name).scores)}점을 저장했습니다.`);
       renderAdmin('prof');
-      if (next) { const nb = document.querySelector(`[data-ps="${CSS.escape(next.name)}"]`); if (nb) nb.scrollIntoView({ block:'nearest', inline:'nearest' }); }
     } catch (err) { $('#ferr').textContent = err.message; }
   };
 }
@@ -744,13 +927,7 @@ function adminResultHTML() {
     </tbody></table></div>
     <p class="muted small">총점은 교수평가 + 상호평가 평균 + 자체평가입니다.</p>`;
 }
-function bindAdminResult() {
-  $('#xls').onclick = downloadExcel;
-}
-async function reloadAdmin(tab) {
-  try { const r = await api('adminLogin', { p:S.p, adminPw:S.adminPw }); S.admin = r.data; renderAdmin(tab); toast('최신 평가 상황을 불러왔습니다.'); }
-  catch (err) { toast(err.message); }
-}
+function bindAdminResult() { $('#xls').onclick = downloadExcel; }
 
 /* 평가 현황 */
 function adminStatusHTML() {
@@ -780,11 +957,13 @@ function adminStatusHTML() {
 function bindAdminStatus() {
   $('#onlyTodo').onchange = e => { S.onlyTodo = e.target.checked; renderAdmin('status'); };
 }
+
 function downloadExcel() {
   if (typeof XLSX === 'undefined') { toast('엑셀 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도하세요.'); return; }
   const A = S.admin, R = results(), wb = XLSX.utils.book_new();
   const r2 = v => v === null ? '' : Math.round(v * 100) / 100;
   const t = v => v ? new Date(v).toLocaleString('ko-KR') : '';
+  const PT = T().peer.map(x => x.label), ST = T().self.map(x => x.label);
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
     ['이름','학번','평가 제외','교수평가(70)','상호평가 평균(20)','받은 상호평가 수','자체평가(10)','총점(100)','상호평가 참여','배포 주소'],
     ...R.map(r => [r.name, r.sid, r.excluded ? 'O' : '', r.prof ?? '', r2(r.peerAvg), r.recv.length, r.self ?? '', r2(r.total), `${r.given}/${r.need}`, r.url])
@@ -794,37 +973,39 @@ function downloadExcel() {
     ...A.profs.map(x => [x.name, ...x.scores, x.total, x.memo, t(x.time)])
   ]), '교수평가');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-    ['평가자','피평가자', ...PEER_ITEMS.map(i => `${i.label}(${i.max})`), '합계(20)', '피드백', '제출시각'],
-    ...A.peers.map(x => [x.evaluator, x.target, ...x.scores, x.total, x.feedback, t(x.time)])
+    ['평가자','피평가자', ...PEER_ITEMS.map(i => `${i.label}(${i.max})`), '합계(20)', ...PT, '제출시각'],
+    ...A.peers.map(x => [x.evaluator, x.target, ...x.scores, x.total, ...x.texts, t(x.time)])
   ]), '상호평가 상세');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-    ['이름', ...SELF_ITEMS.map(i => `${i.label}(${i.max})`), '합계(10)', '목표 사용자와 사용 이유','구현한 기능 / 못한 기능','어려웠던 점','배운 점','다음에 적용할 점','제출시각'],
+    ['이름', ...SELF_ITEMS.map(i => `${i.label}(${i.max})`), '합계(10)', ...ST, '제출시각'],
     ...A.selves.map(x => [x.name, ...x.scores, x.total, ...x.texts, t(x.time)])
   ]), '자기평가');
   const d = new Date();
-  XLSX.writeFile(wb, `프로젝트I_평가결과_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.xlsx`);
+  XLSX.writeFile(wb, `${PROJ().name.replace(/\s/g, '')}_평가결과_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.xlsx`);
 }
 
 /* 피드백 (교수자) */
 function adminFeedbackHTML() {
-  const A = S.admin;
-  const list = A.students.map(s => ({ ...s, fbs: A.peers.filter(p => p.target === s.name && String(p.feedback).trim()) }));
+  const A = S.admin, labels = T().peer.map(x => x.label);
+  const list = A.students.map(s => ({ ...s, fbs: A.peers.filter(p => p.target === s.name && p.texts.some(x => String(x).trim())) }));
   if (!S.fbSel || !list.some(x => x.name === S.fbSel)) S.fbSel = list[0].name;
   const cur = list.find(x => x.name === S.fbSel);
-  return `<div class="split">
+  return `${fbSwitchHTML()}
+    <div class="split">
     <ul class="plist" aria-label="학생 목록">${list.map(x => `<li><button data-fs="${esc(x.name)}" aria-current="${x.name === S.fbSel}">
       <span>${esc(x.name)}${x.excluded ? ' · 제외' : ''}</span><span class="sc">${x.fbs.length}개</span></button></li>`).join('')}</ul>
     <section class="form" style="margin-top:0">
       <div class="form-top"><div><p class="muted small" style="margin:0">받은 상호평가 피드백</p><h2>${esc(cur.name)}</h2></div>
         <div class="top-actions">${cur.excluded ? '<span class="pill lg off">평가 제외</span>' : ''}<span class="pill lg none">${cur.fbs.length}개</span>
         <button class="btn sm" id="reload">새로고침</button></div></div>
-      ${cur.fbs.length ? `<ol class="fb-cards plain">${cur.fbs.map((f, i) => `<li><span class="fb-no">${i + 1}</span><div><p>${esc(String(f.feedback).replace(/^'/, ''))}</p>
+      ${cur.fbs.length ? `<ol class="fb-cards plain">${cur.fbs.map((f, i) => `<li><span class="fb-no">${i + 1}</span><div>${fbBody(labels, f.texts)}
         <div class="fb-meta">${esc(f.evaluator)} · ${f.total} / 20점</div></div></li>`).join('')}</ol>`
         : '<div class="empty" style="margin-top:20px">받은 피드백이 없습니다.</div>'}
       <p class="muted small" style="margin-top:16px">학생 화면에서는 작성자 이름과 점수 없이 피드백 내용만 보입니다.</p>
     </section></div>`;
 }
 function bindAdminFeedback() {
+  bindFbSwitch();
   document.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { S.fbSel = b.dataset.fs; renderAdmin('feedback'); });
 }
 
@@ -833,16 +1014,17 @@ function bindAdminFeedback() {
   const ss = store;
   try {
     if (ss.getItem('adminPw')) {
-      const pw = ss.getItem('adminPw');
-      const r = await api('adminLogin', { p:S.p, adminPw:pw });
-      S.adminPw = pw; S.admin = r.data; return renderAdmin('students');
+      const pw = ss.getItem('adminPw'), p = ss.getItem('adminP') || ADMIN_DEFAULT;
+      const r = await api('adminLogin', { p, adminPw:pw });
+      S.p = p; S.adminPw = pw; S.admin = r.data; return renderAdmin('students');
     }
-    if (ss.getItem('gatePw')) {
+    const p = ss.getItem('p');
+    if (ss.getItem('gatePw') && p && PROJ(p) && PROJ(p).open) {
       const g = ss.getItem('gatePw');
-      const r = await api('gate', { p:S.p, pw:g });
-      S.gatePw = g; S.students = r.students;
+      const r = await api('gate', { p, pw:g });
+      S.p = p; S.gatePw = g; S.students = r.students;
       if (ss.getItem('me') && ss.getItem('sid')) {
-        const r2 = await api('studentLogin', { p:S.p, gatePw:g, name:ss.getItem('me'), sid:ss.getItem('sid') });
+        const r2 = await api('studentLogin', { p, gatePw:g, name:ss.getItem('me'), sid:ss.getItem('sid') });
         S.me = ss.getItem('me'); S.sid = ss.getItem('sid'); S.data = r2.data;
         return renderStudent('peer');
       }
